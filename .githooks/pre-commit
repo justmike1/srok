@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# Activate by: git config core.hooksPath .githooks
+echo "Running cargo fmt..."
+cargo fmt --all
+git add -u
+exit 0

@@ -1,0 +1,82 @@
+[package]
+name = "srok"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "srok"
+path = "src/main.rs"
+required-features = ["ssr"]
+
+[dependencies]
+leptos = { version = "0.7.0", features = ["nightly"] }
+leptos_router = { version = "0.7.0", features = ["nightly"] }
+leptos_meta = { version = "0.7.0" }
+
+# SSR-specific
+axum = { version = "0.7", optional = true }
+tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
+leptos_axum = { version = "0.7.0", optional = true }
+leptos-use = {version = "0.15.7", optional = true }
+quick_cache = {  version = "0.6.13", optional = true }
+dotenv = { version = "0.15", optional = true }
+env_logger = { version = "0.10", optional = true }
+openapi = { version = "0.1.5", optional = true }
+
+# Hydration/WebAssembly-specific
+console_error_panic_hook = { version = "0.1", optional = true }
+wasm-bindgen = { version = "=0.2.100", optional = true }
+reqwest = { version = "0.12.15", default-features = false, features = ["json", "rustls-tls"] }
+web-sys = "0.3.77"
+serde_json = "1.0.140"
+serde = "1.0.219"
+log =  "0.4"
+serde_repr = "0.1.20"
+url =  "2.5.0" 
+serde_with = "3.12.0"
+
+[features]
+hydrate = [
+    "leptos/hydrate",
+    "dep:console_error_panic_hook",
+    "dep:wasm-bindgen",
+]
+ssr = [
+    "dep:axum",
+    "dep:tokio",
+    "dep:leptos_axum",
+    "dep:quick_cache",
+    "dep:dotenv",
+    "dep:env_logger",
+    "dep:openapi",
+    "leptos/ssr",
+    "leptos_meta/ssr",
+    "leptos_router/ssr",
+    "leptos-use/ssr",
+]
+
+[profile.wasm-release]
+inherits = "release"
+opt-level = 'z'
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[package.metadata.leptos]
+output-name = "srok"
+style-file = "style/srok.scss"
+site-root = "target/site"
+site-pkg-dir = "pkg"
+assets-dir = "public"
+site-addr = "127.0.0.1:3000"
+reload-port = 3001
+browserquery = "defaults"
+env = "DEV"
+bin-features = ["ssr"]
+bin-default-features = false
+lib-features = ["hydrate"]
+lib-default-features = false
+lib-profile-release = "wasm-release"

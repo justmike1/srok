@@ -1,0 +1,122 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "GitHub Commit Search",
+    "version": "1.0.0",
+    "description": "Minimal spec exposing only the /search/commits endpoint from GitHub v3 REST API."
+  },
+  "servers": [
+    { "url": "https://api.github.com" }
+  ],
+  "paths": {
+    "/search/commits": {
+      "get": {
+        "summary": "Search commits",
+        "operationId": "searchCommits",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Search keywords and qualifiers (e.g. `shodan_api_key+remove`).",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Must be `application/vnd.github.cloak-preview+json` for commit search.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "application/vnd.github.cloak-preview+json"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sort by `author-date` or `committer-date`.",
+            "schema": {
+              "type": "string",
+              "enum": ["author-date", "committer-date"]
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "`desc` (default) or `asc`.",
+            "schema": {
+              "type": "string",
+              "enum": ["desc", "asc"],
+              "default": "desc"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Results per page (max 100).",
+            "schema": { "type": "integer", "default": 30 }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number of the results to fetch.",
+            "schema": { "type": "integer", "default": 1 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Commit search results",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CommitSearchResponse" }
+              }
+            }
+          },
+          "304": { "description": "Not modified" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CommitSearchResponse": {
+        "type": "object",
+        "required": ["total_count", "incomplete_results", "items"],
+        "properties": {
+          "total_count": { "type": "integer" },
+          "incomplete_results": { "type": "boolean" },
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CommitItem" }
+          }
+        }
+      },
+      "CommitItem": {
+        "type": "object",
+        "required": ["sha", "html_url", "commit"],
+        "properties": {
+          "sha": { "type": "string" },
+          "html_url": { "type": "string", "format": "uri" },
+          "commit": { "$ref": "#/components/schemas/CommitDetail" },
+          "author": { "$ref": "#/components/schemas/AuthorSummary", "nullable": true }
+        }
+      },
+      "CommitDetail": {
+        "type": "object",
+        "required": ["message", "author"],
+        "properties": {
+          "message": { "type": "string" },
+          "author": { "$ref": "#/components/schemas/AuthorSummary" }
+        }
+      },
+      "AuthorSummary": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string" },
+          "date": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}

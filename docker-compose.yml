@@ -1,0 +1,7 @@
+services:
+  srok:
+    image: "docker.io/mikeengineering/srok:main-latest"
+    container_name: srok
+    restart: unless-stopped
+    ports:
+      - 3000:3000

@@ -1,0 +1,51 @@
+on:
+  workflow_dispatch: null
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
+      - "Makefile"
+      - ".githooks/**"
+
+permissions:
+  contents: read
+  id-token: write
+  packages: write
+
+name: Build & Push Docker Image
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt
+      - name: Rustfmt Check
+        uses: actions-rust-lang/rustfmt@v1
+
+  build-and-push:
+    needs: [formatting]
+    name: Build & Push Docker Image
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile service 
+        run: make compile
+      - name: Build & Push images
+        uses: ./.github/actions/build-and-push-docker
+        with:
+          SERVICE: srok
+          ORGANIZATION_NAME: mikeengineering
+          DOCKER_REGISTRY_USER: mikeengineering
+          DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+          BRANCH: ${GITHUB_REF##*/}
+          PROJECT_VERSION: "1.0.0" # TODO: npx release
