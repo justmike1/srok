@@ -45,6 +45,7 @@ pub fn GithubTable(response: CommitSearchResponse) -> impl IntoView {
         .collect();
 
     view! {
+      <div class="table-container">
         <table class="leptos-datatable">
             <thead>
                 <tr>
@@ -81,5 +82,6 @@ pub fn GithubTable(response: CommitSearchResponse) -> impl IntoView {
                 }).collect_view()}
             </tbody>
         </table>
+      </div>
     }
 }

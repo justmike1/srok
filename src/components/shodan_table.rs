@@ -48,6 +48,7 @@ pub fn ShodanTable(response: ShodanSearchResponse) -> impl IntoView {
         .collect();
 
     view! {
+      <div class="table-container">
         <table class="leptos-datatable">
             <thead>
                 <tr>
@@ -120,5 +121,6 @@ pub fn ShodanTable(response: ShodanSearchResponse) -> impl IntoView {
                 }).collect_view()}
             </tbody>
         </table>
+      </div>
     }
 }

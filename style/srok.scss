@@ -1,3 +1,8 @@
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
 /* === Base Light Theme (default) === */
 body {
   background: #fff;
@@ -303,77 +308,103 @@ footer {
 }
 
 /* === DataTable Styling === */
+.table-container {
+  width: 100%;
+  height: calc(100vh - 160px);
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  position: relative;
+  background: transparent;
+  padding: 0;
+}
+
 .leptos-datatable {
   width: 100%;
-  border-collapse: collapse;
-  margin: 2rem auto;
+  border-collapse: separate;
+  border-spacing: 0;
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.95rem;
   color: #111;
+}
 
-  th, td {
-    border: 1px solid currentColor;
-    padding: 0.75rem;
-    text-align: left;
+.leptos-datatable th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #222;
+  color: #fff;
+  font-size: 1.05rem;
+  padding: 0.9rem 0.75rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .leptos-datatable th {
+    background-color: #222;
+    color: #fff;
+    font-size: 1.05rem;
+    padding: 0.9rem 0.75rem;
+  }
+}
+
+.leptos-datatable td {
+  width: 25%; // 4 columns
+  box-sizing: border-box;
+  border: 1px solid currentColor;
+  padding: 0.75rem;
+  text-align: left;
+  word-break: break-word;
+}
+
+.leptos-datatable tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.leptos-datatable tr:hover {
+  background-color: #e6f3ff;
+}
+
+.leptos-datatable .clickable-row {
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #cce7ff;
   }
 
-  th {
-    background-color: #f0f0f0;
-    font-weight: bold;
+  &.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 
-  tr:nth-child(even) {
-    background-color: #fafafa;
-  }
-
-  tr:hover {
-    background-color: #e6f3ff;
-  }
-
-  .clickable-row {
-    transition: background-color 0.2s ease;
-
-    &:hover {
-      background-color: #cce7ff;
-    }
-
-    &.disabled {
-      cursor: not-allowed;
-      opacity: 0.5;
-    }
-
-    &:not(.disabled) {
-      cursor: pointer;
-    }
-  }
-
-  td .action-btn {
-    font-family: 'Courier New', Courier, monospace;
-    padding: 6px 14px;
-    font-size: 0.85rem;
-    border: 2px solid black;
-    border-radius: 6px;
-    background: white;
-    color: black;
+  &:not(.disabled) {
     cursor: pointer;
-    transition: all 0.2s ease;
-    margin-left: 0.5rem;
   }
+}
 
-  td .action-btn:hover {
-    background: black;
-    color: white;
-  }
+.leptos-datatable td .action-btn {
+  font-family: 'Courier New', Courier, monospace;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  border: 2px solid black;
+  border-radius: 6px;
+  background: white;
+  color: black;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 0.5rem;
+}
+
+.leptos-datatable td .action-btn:hover {
+  background: black;
+  color: white;
 }
 
 /* === Dark Mode === */
 @media (prefers-color-scheme: dark) {
   .leptos-datatable {
     color: #eee;
-
-    th {
-      background-color: #222;
-    }
+    border-collapse: separate;
+    border-spacing: 0;
 
     td {
       background-color: #111;
@@ -397,6 +428,39 @@ footer {
       background: white;
       color: black;
     }
+  }
+}
+
+/* === Scrollable Table Wrapper === */
+.table-container {
+  width: 100%;
+  height: calc(100vh - 160px);
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  position: relative;
+}
+
+/* Adjust height for higher resolutions */
+@media screen and (min-height: 1440px) {
+  .table-container {
+    height: 800px;
+  }
+}
+
+@media screen and (min-height: 2160px) {
+  .table-container {
+    height: 1000px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .table-container {
+    border-color: #444;
+  }
+
+  .table-container .leptos-datatable thead th {
+    background-color: #222;
+    color: #fff;
   }
 }
 
