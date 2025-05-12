@@ -1,4 +1,4 @@
-use crate::components::github_table::GithubTable;
+use crate::components::github::table::GithubTable;
 use crate::server_functions::search_integration;
 use crate::services::github::models::CommitSearchResponse;
 use leptos::prelude::*;
