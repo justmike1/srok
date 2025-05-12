@@ -3,10 +3,10 @@ html, body {
   overflow: hidden;
 }
 
-/* === Base Light Theme (default) === */
+/* === Base Dark-ish Theme (static) === */
 body {
-  background: #fff;
-  color: #000;
+  background: #111;
+  color: #eee;
   font-family: 'Courier New', Courier, monospace;
   margin: 0;
   padding: 0;
@@ -14,17 +14,11 @@ body {
 
 .disclaimer {
   font-size: 0.75rem;
-  color: #666;
+  color: #aaa;
   max-width: 1000px;
   margin: 4rem auto 2rem;
   text-align: center;
   line-height: 1.5;
-}
-
-@media (prefers-color-scheme: dark) {
-  .disclaimer {
-    color: #aaa;
-  }
 }
 
 .container {
@@ -62,7 +56,7 @@ header {
 .search-bar {
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
-  border: 2px solid black;
+  border: 2px solid #444;
   border-radius: 8px;
   width: 60vw;
   max-width: 600px;
@@ -80,21 +74,22 @@ header {
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   background: transparent;
-  border: 2px solid black;
+  border: 2px solid #444;
   cursor: pointer;
   transition: all 0.2s ease;
+  color: #eee;
 }
 
 .btn-scan:hover {
-  background: black;
-  color: white;
+  background: #eee;
+  color: #111;
 }
 
 /* === Footer Section === */
 footer {
   margin-top: 4rem;
   font-size: 0.8rem;
-  opacity: 1;
+  opacity: 0.8;
 }
 
 .footer-row {
@@ -107,14 +102,13 @@ footer {
   max-width: 960px;
   padding: 0 1rem;
   margin-top: 4rem;
-  opacity: 1;
 }
 
 .footer-text {
   margin: 0;
   flex: 1;
   text-align: left;
-  opacity: 1;
+  opacity: 0.8;
 }
 
 .theme-toggle {
@@ -126,17 +120,15 @@ footer {
   color: inherit;
   cursor: pointer;
   transition: all 0.2s ease;
-  opacity: 1;
 }
 
 .theme-toggle:hover {
-  background: rgba(0, 0, 0, 0.05);
-  opacity: 1;
+  background: rgba(255,255,255,0.1);
 }
 
 .not-found {
   margin-top: 2rem;
-  color: red;
+  color: #ff6b6b;
   font-weight: bold;
 }
 
@@ -150,7 +142,7 @@ footer {
 }
 
 .json-output {
-  background-color: #f5f5f5;
+  background-color: #222;
   padding: 1rem;
   border-radius: 8px;
   margin-top: 1rem;
@@ -158,8 +150,10 @@ footer {
   font-family: monospace;
   max-height: 400px;
   overflow-y: auto;
+  color: #eee;
 }
 
+/* === Integration Section === */
 .integration-button {
   display: flex;
   flex-direction: column;
@@ -167,15 +161,16 @@ footer {
   width: 160px;
   height: 160px;
   padding: 1rem;
-  border: 1px solid black;
+  border: 1px solid #444;
   border-radius: 8px;
-  background: white;
+  background: #111;
+  color: #eee;
   transition: transform 0.2s ease;
 }
 
 .integration-button:hover {
   transform: scale(1.05);
-  background: #f4f4f4;
+  background: #222;
 }
 
 .integration-logo {
@@ -183,10 +178,10 @@ footer {
   height: 96px;
   object-fit: contain;
   margin-bottom: 0.5rem;
-  filter: none;
 }
 
 .integration-name {
+  margin-top: 0.5rem;
   font-size: 16px;
   font-weight: 500;
   text-align: center;
@@ -199,12 +194,10 @@ footer {
     width: 120px;
     height: 120px;
   }
-
   .integration-logo {
     width: 72px;
     height: 72px;
   }
-
   .integration-name {
     font-size: 14px;
   }
@@ -216,50 +209,8 @@ footer {
     align-items: center;
     gap: 0.5rem;
   }
-
   .footer-text {
     text-align: center;
-  }
-}
-
-/* === Dark Mode (System or Manual) === */
-@media (prefers-color-scheme: dark) {
-  body {
-    background: #000;
-    color: #fff;
-  }
-
-  .integration-button {
-    border-color: white;
-    background: #111;
-  }
-
-  .integration-button:hover {
-    background: #222;
-  }
-
-  .integration-name {
-    color: #fff;
-  }
-
-  .btn-scan {
-    border-color: white;
-    color: white;
-  }
-
-  .btn-scan:hover {
-    background: white;
-    color: black;
-  }
-
-  .not-found {
-    color: #ff6b6b;
-  }
-
-  .search-bar {
-    border-color: white;
-    color: white;
-    background: transparent;
   }
 }
 
@@ -274,58 +225,48 @@ footer {
 .toggle-button {
   padding: 0.5rem 1rem;
   font-size: 1rem;
-  border: 2px solid black;
-  background: white;
+  border: 2px solid #444;
+  background: #111;
   cursor: pointer;
   transition: background 0.3s ease;
   border-radius: 6px;
+  color: #eee;
 }
 
 .toggle-button:hover {
-  background: #f0f0f0;
+  background: #222;
 }
 
 .toggle-button.active {
-  background: black;
-  color: white;
+  background: #eee;
+  color: #111;
 }
 
-@media (prefers-color-scheme: dark) {
-  .toggle-button {
-    background: #111;
-    border-color: #fff;
-    color: #fff;
-  }
-
-  .toggle-button:hover {
-    background: #222;
-  }
-
-  .toggle-button.active {
-    background: #fff;
-    color: #000;
-  }
-}
-
-/* === DataTable Styling === */
+/* === DataTable & Pager === */
 .table-container {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: calc(100vh - 160px);
-  overflow-y: auto;
-  border: 1px solid #ccc;
+  border: 1px solid #444;
   border-radius: 8px;
-  position: relative;
   background: transparent;
-  padding: 0;
+}
+
+.table-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .leptos-datatable {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
+  table-layout: auto;
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.95rem;
-  color: #111;
+  color: #eee;
 }
 
 .leptos-datatable th {
@@ -338,15 +279,6 @@ footer {
   padding: 0.9rem 0.75rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  .leptos-datatable th {
-    background-color: #222;
-    color: #fff;
-    font-size: 1.05rem;
-    padding: 0.9rem 0.75rem;
-  }
-}
-
 .leptos-datatable td {
   box-sizing: border-box;
   border: 1px solid currentColor;
@@ -356,138 +288,97 @@ footer {
 }
 
 .leptos-datatable tr:nth-child(even) {
-  background-color: #fafafa;
+  background-color: #1a1a1a;
 }
 
 .leptos-datatable tr:hover {
-  background-color: #e6f3ff;
+  background-color: #2a3a44;
 }
 
 .leptos-datatable .clickable-row {
   transition: background-color 0.2s ease;
-
-  &:hover {
-    background-color: #cce7ff;
-  }
-
-  &.disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-
-  &:not(.disabled) {
-    cursor: pointer;
-  }
+}
+.leptos-datatable .clickable-row:hover {
+  background-color: #3a4a55;
+}
+.leptos-datatable .clickable-row.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .leptos-datatable td .action-btn {
   font-family: 'Courier New', Courier, monospace;
   padding: 6px 14px;
   font-size: 0.85rem;
-  border: 2px solid black;
+  border: 2px solid #444;
   border-radius: 6px;
-  background: white;
-  color: black;
+  background: #111;
+  color: #eee;
   cursor: pointer;
   transition: all 0.2s ease;
   margin-left: 0.5rem;
 }
-
 .leptos-datatable td .action-btn:hover {
-  background: black;
-  color: white;
+  background: #eee;
+  color: #111;
 }
 
-/* === Dark Mode === */
-@media (prefers-color-scheme: dark) {
-  .leptos-datatable {
-    color: #eee;
-    border-collapse: separate;
-    border-spacing: 0;
-
-    td {
-      background-color: #111;
-    }
-
-    tr:nth-child(even) {
-      background-color: #1a1a1a;
-    }
-
-    tr:hover {
-      background-color: #1f2a33;
-    }
-
-    td .action-btn {
-      background: #111;
-      border-color: white;
-      color: white;
-    }
-
-    td .action-btn:hover {
-      background: white;
-      color: black;
-    }
-  }
+.pagination-controls {
+  flex-shrink: 0;
+  padding: 0.75rem 1rem;
+  background: #222;
+  border-top: 1px solid #444;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Courier New', Courier, monospace;
 }
 
-/* === Scrollable Table Wrapper === */
-.table-container {
-  width: 100%;
-  height: calc(100vh - 160px);
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  position: relative;
+.pagination-controls select,
+.pagination-controls button {
+  background: transparent;
+  border: 1px solid #444;
+  color: #eee;
+  font-family: 'Courier New', Courier, monospace;
 }
 
-/* Adjust height for higher resolutions */
+.pagination-controls button:hover:not([disabled]) {
+  background: #eee;
+  color: #111;
+}
+
+.pagination-controls button[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* === Responsive height tweaks === */
 @media screen and (min-height: 1440px) {
-  .table-container {
-    height: 800px;
-  }
+  .table-container { height: 800px; }
 }
-
 @media screen and (min-height: 2160px) {
-  .table-container {
-    height: 1000px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .table-container {
-    border-color: #444;
-  }
-
-  .table-container .leptos-datatable thead th {
-    background-color: #222;
-    color: #fff;
-  }
+  .table-container { height: 1000px; }
 }
 
 /* === Tooltip for clickable rows === */
 .clickable-row {
   position: relative;
-
-  &:hover::after {
-    content: attr(title);
-    position: absolute;
-    top: -2.75rem;
-    left: 0;
-    background: #222;
-    color: #fff;
-    font-size: 0.85rem;
-    font-family: monospace;
-    padding: 8px 12px;
-    border-radius: 6px;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 1;
-    z-index: 999;
-    max-width: 420px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  &::after {
-    transition: none;
-  }
+}
+.clickable-row:hover::after {
+  content: attr(title);
+  position: absolute;
+  top: -2.75rem;
+  left: 0;
+  background: #222;
+  color: #fff;
+  font-size: 0.85rem;
+  font-family: monospace;
+  padding: 8px 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 999;
+  max-width: 420px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

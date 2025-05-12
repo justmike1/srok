@@ -1,5 +1,7 @@
+use crate::components::PagedTable;
 use crate::services::github::models::CommitSearchResponse;
 use leptos::prelude::*;
+use std::sync::Arc;
 
 #[derive(Clone)]
 struct GithubEntry {
@@ -45,43 +47,35 @@ pub fn GithubTable(response: CommitSearchResponse) -> impl IntoView {
         .collect();
 
     view! {
-      <div class="table-container">
-        <table class="leptos-datatable">
-            <thead>
+        <PagedTable
+            entries=Arc::new(entries)
+            header=|| view! {
                 <tr>
                     <th>"Author"</th>
                     <th>"Commit"</th>
                     <th>"Link"</th>
                     <th>"API Key Snippet"</th>
                 </tr>
-            </thead>
-            <tbody>
-                {entries.into_iter().map(|entry| {
-                    let sha_short = entry.sha.chars().take(7).collect::<String>();
-                    let url = entry.html_url.clone();
-
-                    view! {
-                        <tr>
-                            <td>{entry.author}</td>
-                            <td>{sha_short}</td>
-                            <td>
-                                <a
-                                    href=url
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    style="color: #0ea5e9; text-decoration: underline;"
-                                >
-                                    "View"
-                                </a>
-                            </td>
-                            <td>
-                                <code>{entry.api_key_hint}</code>
-                            </td>
-                        </tr>
-                    }
-                }).collect_view()}
-            </tbody>
-        </table>
-      </div>
+            }
+            row=move |entry: &GithubEntry| view! {
+                <tr>
+                    <td>{entry.author.clone()}</td>
+                    <td>{entry.sha.chars().take(7).collect::<String>()}</td>
+                    <td>
+                        <a
+                            href=entry.html_url.clone()
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style="color: #0ea5e9; text-decoration: underline;"
+                        >
+                            "View"
+                        </a>
+                    </td>
+                    <td>
+                        <code>{entry.api_key_hint.clone()}</code>
+                    </td>
+                </tr>
+            }
+        />
     }
 }

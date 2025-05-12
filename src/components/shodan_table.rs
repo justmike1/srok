@@ -1,5 +1,7 @@
+use crate::components::PagedTable;
 use crate::services::shodan::models::search_response::ShodanSearchResponse;
 use leptos::prelude::*;
+use std::sync::Arc;
 
 #[derive(Clone)]
 struct ShodanEntry {
@@ -48,9 +50,9 @@ pub fn ShodanTable(response: ShodanSearchResponse) -> impl IntoView {
         .collect();
 
     view! {
-      <div class="table-container">
-        <table class="leptos-datatable">
-            <thead>
+        <PagedTable
+            entries=Arc::new(entries)
+            header=|| view! {
                 <tr>
                     <th>"IP"</th>
                     <th>"Port"</th>
@@ -59,68 +61,57 @@ pub fn ShodanTable(response: ShodanSearchResponse) -> impl IntoView {
                     <th>"Country"</th>
                     <th colspan="2">"Actions"</th>
                 </tr>
-            </thead>
-            <tbody>
-                {entries.into_iter().map(|entry| {
-                    let ip_ping = entry.ip.clone();
-                    let ip_creds = entry.ip.clone();
-                    let ip_redirect = entry.ip.clone();
-                    let tooltip = entry
+            }
+            row=move |entry: &ShodanEntry| {
+                let ip_ping = entry.ip.clone();
+                let ip_creds = entry.ip.clone();
+                let tooltip = entry
                     .hostname
                     .clone()
                     .or(entry.title.clone())
                     .or(entry.host_url.clone())
                     .unwrap_or_else(|| "no host".to_string());
-
                 let redirect_host = entry.hostname.clone().map(|h| format!("http://{}", h));
                 let style_host = redirect_host.clone();
-                    view! {
-                        <tr
-                            class="clickable-row"
-                            title=tooltip.clone()
-                            on:click=move |_| {
-                                if let Some(url) = redirect_host.as_ref() {
-                                    log::info!("redirecting to host: {}", url);
-                                    window()
+                view! {
+                    <tr
+                        class="clickable-row"
+                        title=tooltip.clone()
+                        on:click=move |_| {
+                            if let Some(url) = redirect_host.as_ref() {
+                                window()
                                     .open_with_url_and_target(url, "_blank")
-                                    .unwrap_or_else(|e| {
-                                        log::error!("Failed to open new tab: {:?}", e);
-                                        None
-                                    });
-                                } else {
-                                    log::warn!("No host to redirect to for {}", ip_redirect);
-                                }
+                                    .unwrap_or(None);
                             }
-                            style=move || {
-                                if style_host.is_some() {
-                                    "cursor: pointer;"
-                                } else {
-                                    "opacity: 0.5; cursor: not-allowed;"
-                                }
+                        }
+                        style=move || {
+                            if style_host.is_some() {
+                                "cursor: pointer;"
+                            } else {
+                                "opacity: 0.5; cursor: not-allowed;"
                             }
-                        >
-                            <td>{entry.ip.clone()}</td>
-                            <td>{entry.port}</td>
-                            <td>{entry.org.clone()}</td>
-                            <td>{entry.city.clone()}</td>
-                            <td>{entry.country.clone()}</td>
-                            <td style="action-btn">
-                                <button on:click=move |ev| {
-                                    ev.stop_propagation();
-                                    log::info!("Ping {}", ip_ping);
-                                }>"Ping"</button>
-                            </td>
-                            <td style="action-btn">
-                                <button on:click=move |ev| {
-                                    ev.stop_propagation();
-                                    log::info!("Try default credentials on {}", ip_creds);
-                                }>"Try Default Credentials"</button>
-                            </td>
-                        </tr>
-                    }
-                }).collect_view()}
-            </tbody>
-        </table>
-      </div>
+                        }
+                    >
+                        <td>{entry.ip.clone()}</td>
+                        <td>{entry.port}</td>
+                        <td>{entry.org.clone()}</td>
+                        <td>{entry.city.clone()}</td>
+                        <td>{entry.country.clone()}</td>
+                        <td>
+                            <button on:click=move |ev| {
+                                ev.stop_propagation();
+                                log::info!("Ping {}", ip_ping);
+                            }>"Ping"</button>
+                        </td>
+                        <td>
+                            <button on:click=move |ev| {
+                                ev.stop_propagation();
+                                log::info!("Try default credentials on {}", ip_creds);
+                            }>"Try Default Credentials"</button>
+                        </td>
+                    </tr>
+                }
+            }
+        />
     }
 }
