@@ -17,6 +17,7 @@ struct ShodanEntry {
 
 #[component]
 pub fn ShodanTable(response: ShodanSearchResponse) -> impl IntoView {
+    let total = response.total as usize;
     let entries: Vec<ShodanEntry> = response
         .matches
         .into_iter()
@@ -52,6 +53,7 @@ pub fn ShodanTable(response: ShodanSearchResponse) -> impl IntoView {
     view! {
         <PagedTable
             entries=Arc::new(entries)
+            total=total
             header=|| view! {
                 <tr>
                     <th>"IP"</th>

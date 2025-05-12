@@ -1,6 +1,5 @@
-use crate::components::{
-    github_integration_page::GithubIntegrationPage, shodan_integration_page::ShodanIntegrationPage,
-};
+use crate::components::github::integration_layout::GithubIntegrationPage;
+use crate::components::shodan::integration_layout::ShodanIntegrationPage;
 use crate::integrations::Integration;
 use leptos::prelude::*;
 use leptos_router::hooks::use_params_map;

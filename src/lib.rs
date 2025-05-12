@@ -1,7 +1,7 @@
 pub mod app;
 pub mod components;
 pub mod integrations;
-pub mod server_functions;
+pub mod server;
 pub mod services;
 
 #[cfg(feature = "hydrate")]

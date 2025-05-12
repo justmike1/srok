@@ -1,11 +1,11 @@
-use crate::components::github_table::GithubTable;
-use crate::server_functions::search_integration;
-use crate::services::github::models::CommitSearchResponse;
+use crate::components::shodan::table::ShodanTable;
+use crate::server::integration::search_integration;
+use crate::services::shodan::models::search_response::ShodanSearchResponse;
 use leptos::prelude::*;
 use leptos_router::hooks::use_params_map;
 
 #[component]
-pub fn GithubIntegrationPage() -> impl IntoView {
+pub fn ShodanIntegrationPage() -> impl IntoView {
     let params = use_params_map();
     let tool = move || params.with(|p| p.get("tool").into_iter().next().unwrap_or_default());
 
@@ -34,22 +34,33 @@ pub fn GithubIntegrationPage() -> impl IntoView {
                   maybe_result.as_ref().map(|result| {
                       let (table_data, err_msg) = match result {
                           Ok(json) => {
-                              serde_json::from_value::<CommitSearchResponse>(json.clone())
-                                  .map(|pd| (pd, String::new()))
-                                  .unwrap_or_else(|e| (
-                                      CommitSearchResponse {
-                                          total_count: 0,
-                                          incomplete_results: false,
-                                          items: vec![],
+                            let ro = json.clone();
+                              match ro.result {
+                                  Some(inner) => serde_json::from_value::<ShodanSearchResponse>(inner)
+                                      .map(|pd| (pd, String::new()))
+                                      .unwrap_or_else(|e| (
+                                          ShodanSearchResponse {
+                                              matches: vec![],
+                                              total: 0,
+                                              facets: None,
+                                          },
+                                          e.to_string(),
+                                      )),
+                                  None => (
+                                      ShodanSearchResponse {
+                                          matches: vec![],
+                                          total: 0,
+                                          facets: None,
                                       },
-                                      e.to_string(),
-                                  ))
+                                      ro.error.unwrap_or("Missing result".to_string()),
+                                  )
+                              }
                           }
                           Err(err) => (
-                              CommitSearchResponse {
-                                  total_count: 0,
-                                  incomplete_results: false,
-                                  items: vec![],
+                              ShodanSearchResponse {
+                                  matches: vec![],
+                                  total: 0,
+                                  facets: None,
                               },
                               err.to_string(),
                           ),
@@ -58,7 +69,7 @@ pub fn GithubIntegrationPage() -> impl IntoView {
                       let hidden = err_msg.is_empty();
                       view! {
                           <div>
-                              <GithubTable response={table_data} />
+                              <ShodanTable response={table_data} />
                               <p class="error" hidden=move || hidden>
                                   {move || err_msg.clone()}
                               </p>

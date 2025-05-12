@@ -13,6 +13,8 @@ struct GithubEntry {
 
 #[component]
 pub fn GithubTable(response: CommitSearchResponse) -> impl IntoView {
+    let total = response.total_count as usize;
+
     let entries: Vec<GithubEntry> = response
         .items
         .into_iter()
@@ -49,6 +51,7 @@ pub fn GithubTable(response: CommitSearchResponse) -> impl IntoView {
     view! {
         <PagedTable
             entries=Arc::new(entries)
+            total=total
             header=|| view! {
                 <tr>
                     <th>"Author"</th>
