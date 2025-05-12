@@ -6,6 +6,7 @@ pub fn PagedTable<T, FHeader, FRow, IVH, IVR>(
     entries: Arc<Vec<T>>,
     header: FHeader,
     row: FRow,
+    #[prop(optional)] total: Option<usize>,
     #[prop(optional, default = 50)] rows_per_page: usize,
 ) -> impl IntoView
 where
@@ -17,15 +18,17 @@ where
 {
     let (page, set_page) = signal(0usize);
 
-    let total_items = entries.len();
-    let total_pages = move || (total_items + rows_per_page - 1) / rows_per_page;
+    let local_count = entries.len();
+    let total_count = total.unwrap_or(local_count);
+
+    let total_pages = move || (local_count + rows_per_page - 1) / rows_per_page;
 
     let paged_entries = move || {
-        if total_items == 0 {
+        if local_count == 0 {
             Vec::new()
         } else {
             let start = page() * rows_per_page;
-            let end = usize::min(start + rows_per_page, total_items);
+            let end = usize::min(start + rows_per_page, local_count);
             entries[start..end].to_vec()
         }
     };
@@ -48,15 +51,12 @@ where
             <div class="pagination-controls">
                 <span>
                     { move || {
-                        if total_items == 0 {
+                        if local_count == 0 {
                             "0 items".to_string()
                         } else {
-                            format!(
-                                "{}–{} of {} items",
-                                page() * rows_per_page + 1,
-                                usize::min((page() + 1) * rows_per_page, total_items),
-                                total_items
-                            )
+                            let start = page() * rows_per_page + 1;
+                            let end = usize::min((page() + 1) * rows_per_page, total_count);
+                            format!("{start}–{end} of {total_count} items")
                         }
                     }}
                 </span>
@@ -73,7 +73,7 @@ where
                             set_page(usize::min(page() + 1, tp.saturating_sub(1)))
                         }
                     }
-                    disabled={ move || total_items == 0 || page() + 1 >= total_pages() }
+                    disabled={ move || local_count == 0 || page() + 1 >= total_pages() }
                 >
                     {">"}
                 </button>
