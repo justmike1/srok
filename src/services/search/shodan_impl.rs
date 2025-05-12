@@ -15,8 +15,8 @@ pub struct ShodanSearch(pub Integration);
 #[async_trait]
 impl IntegrationSearchService for ShodanSearch {
     #[cfg(feature = "ssr")]
-    async fn search(&self, client: &Client) -> Result<ResultRO<Value>, String> {
-        let response = search_integration(client, self.0.clone())
+    async fn search(&self, client: &Client, page: usize) -> Result<ResultRO<Value>, String> {
+        let response = search_integration(client, page, self.0.clone())
             .await
             .map_err(|e| e.to_string())?;
 
@@ -37,7 +37,7 @@ impl IntegrationSearchService for ShodanSearch {
     }
 
     #[cfg(not(feature = "ssr"))]
-    async fn search(&self, _client: &Client) -> Result<ResultRO<Value>, String> {
+    async fn search(&self, _client: &Client, page: usize) -> Result<ResultRO<Value>, String> {
         Err("Shodan search not available on client".into())
     }
 }

@@ -5,5 +5,5 @@ use serde_json::Value;
 
 #[async_trait]
 pub trait IntegrationSearchService {
-    async fn search(&self, client: &Client) -> Result<ResultRO<Value>, String>;
+    async fn search(&self, client: &Client, page: usize) -> Result<ResultRO<Value>, String>;
 }
