@@ -34,16 +34,27 @@ pub fn ShodanIntegrationPage() -> impl IntoView {
                   maybe_result.as_ref().map(|result| {
                       let (table_data, err_msg) = match result {
                           Ok(json) => {
-                              serde_json::from_value::<ShodanSearchResponse>(json.clone())
-                                  .map(|pd| (pd, String::new()))
-                                  .unwrap_or_else(|e| (
+                            let ro = json.clone();
+                              match ro.result {
+                                  Some(inner) => serde_json::from_value::<ShodanSearchResponse>(inner)
+                                      .map(|pd| (pd, String::new()))
+                                      .unwrap_or_else(|e| (
+                                          ShodanSearchResponse {
+                                              matches: vec![],
+                                              total: 0,
+                                              facets: None,
+                                          },
+                                          e.to_string(),
+                                      )),
+                                  None => (
                                       ShodanSearchResponse {
                                           matches: vec![],
                                           total: 0,
                                           facets: None,
                                       },
-                                      e.to_string(),
-                                  ))
+                                      ro.error.unwrap_or("Missing result".to_string()),
+                                  )
+                              }
                           }
                           Err(err) => (
                               ShodanSearchResponse {

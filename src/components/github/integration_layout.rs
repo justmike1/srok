@@ -34,16 +34,27 @@ pub fn GithubIntegrationPage() -> impl IntoView {
                   maybe_result.as_ref().map(|result| {
                       let (table_data, err_msg) = match result {
                           Ok(json) => {
-                              serde_json::from_value::<CommitSearchResponse>(json.clone())
-                                  .map(|pd| (pd, String::new()))
-                                  .unwrap_or_else(|e| (
+                            let ro = json.clone();
+                              match ro.result {
+                                  Some(inner) => serde_json::from_value::<CommitSearchResponse>(inner)
+                                      .map(|pd| (pd, String::new()))
+                                      .unwrap_or_else(|e| (
+                                          CommitSearchResponse {
+                                              total_count: 0,
+                                              incomplete_results: false,
+                                              items: vec![],
+                                          },
+                                          e.to_string(),
+                                      )),
+                                  None => (
                                       CommitSearchResponse {
                                           total_count: 0,
                                           incomplete_results: false,
                                           items: vec![],
                                       },
-                                      e.to_string(),
-                                  ))
+                                      ro.error.unwrap_or("Missing result".to_string()),
+                                  )
+                              }
                           }
                           Err(err) => (
                               CommitSearchResponse {
