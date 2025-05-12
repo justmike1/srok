@@ -11,7 +11,7 @@ use crate::services::shodan::search_integration as shodan_search;
 use reqwest::Client;
 
 #[server]
-pub async fn search_integration(tool: String) -> Result<String, ServerFnError<String>> {
+pub async fn search_integration(tool: String) -> Result<serde_json::Value, ServerFnError<String>> {
     #[cfg(feature = "ssr")]
     {
         let integration = Integration::from_name(&tool)
@@ -35,7 +35,7 @@ pub async fn search_integration(tool: String) -> Result<String, ServerFnError<St
             )));
         };
 
-        serde_json::to_string(&json_value).map_err(|e| ServerFnError::ServerError(e.to_string()))
+        Ok(json_value)
     }
 
     #[cfg(not(feature = "ssr"))]

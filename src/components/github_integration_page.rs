@@ -29,41 +29,44 @@ pub fn GithubIntegrationPage() -> impl IntoView {
             </h1>
 
             <Transition fallback=move || view! { <p>"Loading..."</p> }>
-                {move || {
-                    fetch_action.value().with(|maybe_result| {
-                        maybe_result.as_ref().map(|response| {
-                            let (table_data, err_msg): (CommitSearchResponse, String) = match response {
-                                Ok(data_str) => serde_json::from_str(&data_str)
-                                    .map(|pd| (pd, String::new()))
-                                    .unwrap_or_else(|e| (
-                                        CommitSearchResponse {
-                                            total_count: 0,
-                                            incomplete_results: false,
-                                            items: vec![],
-                                        },
-                                        e.to_string(),
-                                    )),
-                                Err(err) => (
-                                    CommitSearchResponse {
-                                        total_count: 0,
-                                        incomplete_results: false,
-                                        items: vec![],
-                                    },
-                                    err.to_string(),
-                                ),
-                            };
-                            let hidden_msg = err_msg.clone();
-                            view! {
-                                <div>
-                                    <GithubTable response={table_data} />
-                                    <p class="error" hidden=move || hidden_msg.is_empty()>
-                                        {move || err_msg.clone()}
-                                    </p>
-                                </div>
-                            }
-                        })
-                    })
-                }}
+            { move || {
+              fetch_action.value().with(|maybe_result| {
+                  maybe_result.as_ref().map(|result| {
+                      let (table_data, err_msg) = match result {
+                          Ok(json) => {
+                              serde_json::from_value::<CommitSearchResponse>(json.clone())
+                                  .map(|pd| (pd, String::new()))
+                                  .unwrap_or_else(|e| (
+                                      CommitSearchResponse {
+                                          total_count: 0,
+                                          incomplete_results: false,
+                                          items: vec![],
+                                      },
+                                      e.to_string(),
+                                  ))
+                          }
+                          Err(err) => (
+                              CommitSearchResponse {
+                                  total_count: 0,
+                                  incomplete_results: false,
+                                  items: vec![],
+                              },
+                              err.to_string(),
+                          ),
+                      };
+
+                      let hidden = err_msg.is_empty();
+                      view! {
+                          <div>
+                              <GithubTable response={table_data} />
+                              <p class="error" hidden=move || hidden>
+                                  {move || err_msg.clone()}
+                              </p>
+                          </div>
+                      }
+                  })
+              })
+          }}
             </Transition>
         </section>
     }

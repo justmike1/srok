@@ -6,30 +6,26 @@ pub fn PagedTable<T, FHeader, FRow, IVH, IVR>(
     entries: Arc<Vec<T>>,
     header: FHeader,
     row: FRow,
-    #[prop(optional, default = 50)] default_rows_per_page: usize,
+    #[prop(optional, default = 50)] rows_per_page: usize,
 ) -> impl IntoView
 where
-    // T must be Send+Sync so Arc<Vec<T>> can go into reactive closures
     T: Clone + Send + Sync + 'static,
-    // header is only rendered once
     FHeader: Fn() -> IVH + 'static,
     IVH: IntoView + 'static,
-    // row is used inside a reactive closure
     FRow: Fn(&T) -> IVR + Send + Sync + 'static,
     IVR: IntoView + 'static,
 {
     let (page, set_page) = signal(0usize);
-    let (rows_per_page, set_rows_per_page) = signal(default_rows_per_page);
 
     let total_items = entries.len();
-    let total_pages = move || (total_items + rows_per_page() - 1) / rows_per_page();
+    let total_pages = move || (total_items + rows_per_page - 1) / rows_per_page;
 
     let paged_entries = move || {
-        let start = page() * rows_per_page();
-        let end = usize::min(start + rows_per_page(), total_items);
         if total_items == 0 {
-            vec![]
+            Vec::new()
         } else {
+            let start = page() * rows_per_page;
+            let end = usize::min(start + rows_per_page, total_items);
             entries[start..end].to_vec()
         }
     };
@@ -51,32 +47,14 @@ where
             </div>
             <div class="pagination-controls">
                 <span>
-                    "rows per page:"
-                    <select
-                        prop:value=rows_per_page
-                        on:change=move |ev| {
-                            let v = event_target_value(&ev)
-                                .parse::<usize>()
-                                .unwrap_or(default_rows_per_page);
-                            set_rows_per_page(v);
-                            set_page(0);
-                        }
-                    >
-                        <option value="10">"10"</option>
-                        <option value="25">"25"</option>
-                        <option value="50">"50"</option>
-                        <option value="100">"100"</option>
-                    </select>
-                </span>
-                <span>
                     { move || {
                         if total_items == 0 {
                             "0 items".to_string()
                         } else {
                             format!(
                                 "{}–{} of {} items",
-                                page() * rows_per_page() + 1,
-                                usize::min((page() + 1) * rows_per_page(), total_items),
+                                page() * rows_per_page + 1,
+                                usize::min((page() + 1) * rows_per_page, total_items),
                                 total_items
                             )
                         }

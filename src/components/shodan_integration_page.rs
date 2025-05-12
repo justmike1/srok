@@ -29,41 +29,44 @@ pub fn ShodanIntegrationPage() -> impl IntoView {
             </h1>
 
             <Transition fallback=move || view! { <p>"Loading..."</p> }>
-                {move || {
-                    fetch_action.value().with(|maybe_result| {
-                        maybe_result.as_ref().map(|response| {
-                            let (table_data, err_msg): (ShodanSearchResponse, String) = match response {
-                                Ok(data_str) => serde_json::from_str(&data_str)
-                                    .map(|pd| (pd, String::new()))
-                                    .unwrap_or_else(|e| (
+            { move || {
+              fetch_action.value().with(|maybe_result| {
+                  maybe_result.as_ref().map(|result| {
+                      let (table_data, err_msg) = match result {
+                          Ok(json) => {
+                              serde_json::from_value::<ShodanSearchResponse>(json.clone())
+                                  .map(|pd| (pd, String::new()))
+                                  .unwrap_or_else(|e| (
                                       ShodanSearchResponse {
-                                            matches: vec![],
-                                            total: 0,
-                                            facets: None,
-                                        },
-                                        e.to_string(),
-                                    )),
-                                Err(err) => (
-                                  ShodanSearchResponse {
-                                        matches: vec![],
-                                        total: 0,
-                                        facets: None,
-                                    },
-                                    err.to_string(),
-                                ),
-                            };
-                            let hidden_msg = err_msg.clone();
-                            view! {
-                                <div>
-                                    <ShodanTable response={table_data} />
-                                    <p class="error" hidden=move || hidden_msg.is_empty()>
-                                        {move || err_msg.clone()}
-                                    </p>
-                                </div>
-                            }
-                        })
-                    })
-                }}
+                                          matches: vec![],
+                                          total: 0,
+                                          facets: None,
+                                      },
+                                      e.to_string(),
+                                  ))
+                          }
+                          Err(err) => (
+                              ShodanSearchResponse {
+                                  matches: vec![],
+                                  total: 0,
+                                  facets: None,
+                              },
+                              err.to_string(),
+                          ),
+                      };
+
+                      let hidden = err_msg.is_empty();
+                      view! {
+                          <div>
+                              <ShodanTable response={table_data} />
+                              <p class="error" hidden=move || hidden>
+                                  {move || err_msg.clone()}
+                              </p>
+                          </div>
+                      }
+                  })
+              })
+          }}
             </Transition>
         </section>
     }
