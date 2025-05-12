@@ -3,7 +3,7 @@ use crate::services::shodan::models::search_response::ShodanSearchResponse;
 use leptos::prelude::*;
 use std::sync::Arc;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Default)]
 struct ShodanEntry {
     host_url: Option<String>,
     hostname: Option<String>,

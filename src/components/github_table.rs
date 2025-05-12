@@ -3,7 +3,7 @@ use crate::services::github::models::CommitSearchResponse;
 use leptos::prelude::*;
 use std::sync::Arc;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Default)]
 struct GithubEntry {
     author: String,
     sha: String,
