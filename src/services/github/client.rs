@@ -46,8 +46,8 @@ pub async fn search_commits_internal(
         accept: "application/vnd.github.cloak-preview+json".to_string(),
         sort: None,
         order: None,
-        per_page: None,
-        page: None,
+        per_page: Some(100),
+        page: Some(1),
     };
 
     let raw = search_commits::search_commits(config, params)
