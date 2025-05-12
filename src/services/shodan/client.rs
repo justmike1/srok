@@ -59,10 +59,7 @@ pub async fn search_hosts(query: &str) -> Result<ShodanSearchResponse, Box<dyn s
         Box::new(e) as Box<dyn std::error::Error>
     })?;
 
-    serde_json::from_value(raw.clone()).map_err(|e| {
-        debug!("Deserialization error: {e}\nRaw JSON: {raw}");
-        Box::new(e) as Box<dyn std::error::Error>
-    })
+    Ok(raw)
 }
 
 pub async fn search_integration(

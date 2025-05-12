@@ -1,5 +1,5 @@
 use crate::components::shodan::table::ShodanTable;
-use crate::server_functions::search_integration;
+use crate::server::integration::search_integration;
 use crate::services::shodan::models::search_response::ShodanSearchResponse;
 use leptos::prelude::*;
 use leptos_router::hooks::use_params_map;

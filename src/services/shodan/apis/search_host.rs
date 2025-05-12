@@ -9,6 +9,7 @@
  */
 
 use crate::services::shodan::apis::{configuration, ContentType, Error, ResponseContent};
+use crate::services::shodan::models::search_response::ShodanSearchResponse;
 use reqwest;
 use serde::{de::Error as _, Deserialize, Serialize};
 
@@ -36,7 +37,7 @@ pub enum SearchHostError {
 pub async fn search_host(
     configuration: &configuration::Configuration,
     params: SearchHostParams,
-) -> Result<serde_json::Value, Error<SearchHostError>> {
+) -> Result<ShodanSearchResponse, Error<SearchHostError>> {
     let uri_str = format!("{}/shodan/host/search", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
