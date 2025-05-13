@@ -33,7 +33,10 @@ fn get_cache() -> &'static Cache<String, Value> {
     SHODAN_CACHE.get_or_init(|| Cache::new(3600))
 }
 
-pub async fn search_hosts(query: &str) -> Result<ShodanSearchResponse, Box<dyn std::error::Error>> {
+pub async fn search_hosts(
+    query: &str,
+    page: usize,
+) -> Result<ShodanSearchResponse, Box<dyn std::error::Error>> {
     let trimmed = query.trim();
     if trimmed.is_empty() {
         return Err("Search query cannot be empty".into());
@@ -51,7 +54,7 @@ pub async fn search_hosts(query: &str) -> Result<ShodanSearchResponse, Box<dyn s
         key,
         query: trimmed.to_string(),
         facets: None,
-        page: None,
+        page: page.try_into().ok(),
     };
 
     let raw = search_host(config, params).await.map_err(|e| {
@@ -64,19 +67,20 @@ pub async fn search_hosts(query: &str) -> Result<ShodanSearchResponse, Box<dyn s
 
 pub async fn search_integration(
     _client: &reqwest::Client,
+    page: usize,
     integration: Integration,
 ) -> Result<ShodanSearchResponse, ShodanError> {
     let query = integration.to_shodan_query();
-    let query_key = query.to_string();
+    debug!("Searching Shodan with query: {}", query);
 
-    debug!("Searching Shodan with query: {}", query_key);
+    let query_key = format!("{}::page-{}", query, page);
 
     if let Some(cached) = get_cache().get(&query_key) {
         debug!("Cache hit for query: {}", query_key);
         return Ok(serde_json::from_value(cached.clone()).unwrap());
     }
 
-    match search_hosts(&query_key).await {
+    match search_hosts(&query, page).await {
         Ok(response) => {
             let json = serde_json::to_value(&response).map_err(|e| ShodanError {
                 message: e.to_string(),

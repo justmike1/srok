@@ -6,38 +6,30 @@ use reqwest::Client;
 use serde_json::Value;
 
 #[cfg(feature = "ssr")]
-use crate::services::ros::PagingRO;
-#[cfg(feature = "ssr")]
 use crate::services::shodan::search_integration;
+#[cfg(feature = "ssr")]
+use crate::utils::to_result_ro;
 
 pub struct ShodanSearch(pub Integration);
 
 #[async_trait]
 impl IntegrationSearchService for ShodanSearch {
     #[cfg(feature = "ssr")]
-    async fn search(&self, client: &Client) -> Result<ResultRO<Value>, String> {
-        let response = search_integration(client, self.0.clone())
+    async fn search(&self, client: &Client, page: usize) -> Result<ResultRO<Value>, String> {
+        let response = search_integration(client, page, self.0.clone())
             .await
             .map_err(|e| e.to_string())?;
 
-        let paging = PagingRO {
-            start: Some(0),
-            limit: Some(response.matches.len()),
-            total: Some(response.total),
-            has_more: Some(response.total > response.matches.len() as u64),
-        };
-
-        let result_json = serde_json::to_value(response).map_err(|e| e.to_string())?;
-
-        Ok(ResultRO {
-            result: Some(result_json),
-            paging: Some(paging),
-            ..Default::default()
-        })
+        to_result_ro(
+            &response,
+            page,
+            response.matches.len(),
+            response.total as usize,
+        )
     }
 
     #[cfg(not(feature = "ssr"))]
-    async fn search(&self, _client: &Client) -> Result<ResultRO<Value>, String> {
+    async fn search(&self, _client: &Client, _page: usize) -> Result<ResultRO<Value>, String> {
         Err("Shodan search not available on client".into())
     }
 }

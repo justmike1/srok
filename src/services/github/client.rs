@@ -34,6 +34,7 @@ fn get_cache() -> &'static Cache<String, Value> {
 
 pub async fn search_commits_internal(
     query: &str,
+    page: usize,
 ) -> Result<CommitSearchResponse, Box<dyn std::error::Error>> {
     let trimmed = query.trim();
     if trimmed.is_empty() {
@@ -47,7 +48,7 @@ pub async fn search_commits_internal(
         sort: None,
         order: None,
         per_page: Some(100),
-        page: Some(1),
+        page: page.try_into().ok(),
     };
 
     let raw = search_commits::search_commits(config, params)
@@ -72,19 +73,20 @@ pub async fn search_commits_internal(
 
 pub async fn search_integration(
     _client: &reqwest::Client,
+    page: usize,
     integration: Integration,
 ) -> Result<CommitSearchResponse, GithubError> {
     let query = integration.to_github_query();
     debug!("Searching GitHub with query: {}", query);
 
-    let query_key = query.to_string();
+    let query_key = format!("{}::page-{}", query, page);
 
     if let Some(cached) = get_cache().get(&query_key) {
         debug!("Found cached GitHub response");
         return Ok(serde_json::from_value(cached.clone()).unwrap());
     }
 
-    match search_commits_internal(&query).await {
+    match search_commits_internal(&query, page).await {
         Ok(response) => {
             let json = serde_json::to_value(&response).map_err(|e| GithubError {
                 message: e.to_string(),

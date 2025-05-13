@@ -15,7 +15,10 @@ use crate::services::ros::ResultErrorDTO;
 use crate::services::search::{GithubSearch, IntegrationSearchService, ShodanSearch};
 
 #[server]
-pub async fn search_integration(tool: String) -> Result<ResultRO<Value>, ServerFnError<String>> {
+pub async fn search_integration(
+    tool: String,
+    page: usize,
+) -> Result<ResultRO<Value>, ServerFnError<String>> {
     #[cfg(feature = "ssr")]
     {
         let integration = Integration::from_name(&tool)
@@ -40,7 +43,7 @@ pub async fn search_integration(tool: String) -> Result<ResultRO<Value>, ServerF
         };
 
         service
-            .search(&client)
+            .search(&client, page)
             .await
             .map_err(|e| ServerFnError::ServerError(e.to_string()))
     }

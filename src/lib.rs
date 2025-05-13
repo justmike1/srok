@@ -3,6 +3,7 @@ pub mod components;
 pub mod integrations;
 pub mod server;
 pub mod services;
+pub mod utils;
 
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]

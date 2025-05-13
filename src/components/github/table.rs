@@ -1,5 +1,6 @@
 use crate::components::PagedTable;
 use crate::services::github::models::CommitSearchResponse;
+use crate::services::ros::PagingRO;
 use leptos::prelude::*;
 use std::sync::Arc;
 
@@ -12,9 +13,14 @@ struct GithubEntry {
 }
 
 #[component]
-pub fn GithubTable(response: CommitSearchResponse) -> impl IntoView {
-    let total = response.total_count as usize;
-
+pub fn GithubTable(
+    response: CommitSearchResponse,
+    paging: PagingRO,
+    page: ReadSignal<usize>,
+    set_page: WriteSignal<usize>,
+    on_page_change: Callback<usize>,
+    #[prop(optional, default = Signal::derive(|| false), into)] is_loading: Signal<bool>,
+) -> impl IntoView {
     let entries: Vec<GithubEntry> = response
         .items
         .into_iter()
@@ -51,7 +57,11 @@ pub fn GithubTable(response: CommitSearchResponse) -> impl IntoView {
     view! {
         <PagedTable
             entries=Arc::new(entries)
-            total=total
+            paging=paging
+            page=page
+            set_page=set_page
+            on_page_change=on_page_change
+            is_loading=is_loading
             header=|| view! {
                 <tr>
                     <th>"Author"</th>

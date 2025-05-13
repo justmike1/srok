@@ -247,10 +247,10 @@ footer {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: calc(100vh - 160px);
   border: 1px solid #444;
   border-radius: 8px;
   background: transparent;
+  height: 640px;
 }
 
 .table-scroll {
@@ -357,9 +357,19 @@ footer {
 /* === Responsive height tweaks === */
 @media screen and (min-height: 1440px) {
   .table-container { height: 800px; }
+  .leptos-datatable { font-size: 0.95rem; }
 }
+
 @media screen and (min-height: 2160px) {
   .table-container { height: 1000px; }
+  .leptos-datatable { font-size: 1.05rem; }
+}
+
+@media screen and (min-height: 2160px) {
+  .leptos-datatable td .action-btn {
+    font-size: 1rem;
+    padding: 8px 16px;
+  }
 }
 
 /* === Tooltip for clickable rows === */
