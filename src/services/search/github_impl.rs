@@ -8,7 +8,7 @@ use serde_json::Value;
 #[cfg(feature = "ssr")]
 use crate::services::github::search_integration;
 #[cfg(feature = "ssr")]
-use crate::services::ros::PagingRO;
+use crate::utils::to_result_ro;
 
 pub struct GithubSearch(pub Integration);
 
@@ -20,25 +20,12 @@ impl IntegrationSearchService for GithubSearch {
             .await
             .map_err(|e| e.to_string())?;
 
-        let per_page = response.items.len();
-        let start = (page - 1) * per_page;
-        let total = response.total_count as usize;
-        let has_more = start + per_page < total;
-
-        let paging = PagingRO {
-            start: Some(start),
-            limit: Some(per_page),
-            total: Some(total as u64),
-            has_more: Some(has_more),
-        };
-
-        let result_json = serde_json::to_value(response).map_err(|e| e.to_string())?;
-
-        Ok(ResultRO {
-            result: Some(result_json),
-            paging: Some(paging),
-            ..Default::default()
-        })
+        to_result_ro(
+            &response,
+            page,
+            response.items.len(),
+            response.total_count as usize,
+        )
     }
 
     #[cfg(not(feature = "ssr"))]

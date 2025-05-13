@@ -1,3 +1,4 @@
+use crate::utils::constants::ROWS_PER_PAGE;
 use leptos::prelude::*;
 use std::sync::Arc;
 
@@ -12,7 +13,7 @@ pub fn PagedTable<T, FHeader, FRow, IVH, IVR>(
     page: ReadSignal<usize>,
     set_page: WriteSignal<usize>,
     on_page_change: Callback<usize>,
-    #[prop(optional, default = 100)] rows_per_page: usize,
+    #[prop(optional, default = ROWS_PER_PAGE)] rows_per_page: usize,
     #[prop(optional, default = Signal::derive(|| false), into)] is_loading: Signal<bool>,
 ) -> impl IntoView
 where
