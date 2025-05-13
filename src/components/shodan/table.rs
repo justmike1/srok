@@ -1,4 +1,5 @@
 use crate::components::PagedTable;
+use crate::services::ros::PagingRO;
 use crate::services::shodan::models::search_response::ShodanSearchResponse;
 use leptos::prelude::*;
 use std::sync::Arc;
@@ -16,8 +17,13 @@ struct ShodanEntry {
 }
 
 #[component]
-pub fn ShodanTable(response: ShodanSearchResponse) -> impl IntoView {
-    let total = response.total as usize;
+pub fn ShodanTable(
+    response: ShodanSearchResponse,
+    paging: PagingRO,
+    page: ReadSignal<usize>,
+    set_page: WriteSignal<usize>,
+    on_page_change: Callback<usize>,
+) -> impl IntoView {
     let entries: Vec<ShodanEntry> = response
         .matches
         .into_iter()
@@ -53,7 +59,10 @@ pub fn ShodanTable(response: ShodanSearchResponse) -> impl IntoView {
     view! {
         <PagedTable
             entries=Arc::new(entries)
-            total=total
+            paging=paging
+            page=page
+            set_page=set_page
+            on_page_change=on_page_change
             header=|| view! {
                 <tr>
                     <th>"IP"</th>
