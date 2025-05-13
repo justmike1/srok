@@ -15,8 +15,8 @@ pub fn GithubIntegrationPage() -> impl IntoView {
 
     let fetch_action = Action::new(move |(tool, page): &(String, usize)| {
         let tool = tool.clone();
-        let page = *page;
-        async move { search_integration(tool, page).await }
+        let api_page = page + 1;
+        async move { search_integration(tool, api_page).await }
     });
 
     Effect::new(move |_| {

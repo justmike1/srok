@@ -20,11 +20,16 @@ impl IntegrationSearchService for ShodanSearch {
             .await
             .map_err(|e| e.to_string())?;
 
+        let per_page = response.matches.len();
+        let start = (page - 1) * per_page;
+        let total = response.total as usize;
+        let has_more = start + per_page < total;
+
         let paging = PagingRO {
-            start: Some(0),
-            limit: Some(response.matches.len()),
-            total: Some(response.total),
-            has_more: Some(response.total > response.matches.len() as u64),
+            start: Some(start),
+            limit: Some(per_page),
+            total: Some(total as u64),
+            has_more: Some(has_more),
         };
 
         let result_json = serde_json::to_value(response).map_err(|e| e.to_string())?;

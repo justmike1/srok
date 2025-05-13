@@ -20,11 +20,16 @@ impl IntegrationSearchService for GithubSearch {
             .await
             .map_err(|e| e.to_string())?;
 
+        let per_page = response.items.len();
+        let start = (page - 1) * per_page;
+        let total = response.total_count as usize;
+        let has_more = start + per_page < total;
+
         let paging = PagingRO {
-            start: Some(0),
-            limit: Some(response.items.len()),
-            total: Some(response.total_count as u64),
-            has_more: Some(response.total_count as usize > response.items.len()),
+            start: Some(start),
+            limit: Some(per_page),
+            total: Some(total as u64),
+            has_more: Some(has_more),
         };
 
         let result_json = serde_json::to_value(response).map_err(|e| e.to_string())?;
