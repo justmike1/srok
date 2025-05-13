@@ -22,7 +22,7 @@ where
 
     let paging = PagingRO {
         start: Some(start),
-        limit: Some(count),
+        limit: Some(start + count),
         total: Some(total as u64),
         has_more: Some(has_more),
     };
