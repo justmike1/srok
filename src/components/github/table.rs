@@ -19,6 +19,7 @@ pub fn GithubTable(
     page: ReadSignal<usize>,
     set_page: WriteSignal<usize>,
     on_page_change: Callback<usize>,
+    #[prop(optional, default = Signal::derive(|| false), into)] is_loading: Signal<bool>,
 ) -> impl IntoView {
     let entries: Vec<GithubEntry> = response
         .items
@@ -60,6 +61,7 @@ pub fn GithubTable(
             page=page
             set_page=set_page
             on_page_change=on_page_change
+            is_loading=is_loading
             header=|| view! {
                 <tr>
                     <th>"Author"</th>

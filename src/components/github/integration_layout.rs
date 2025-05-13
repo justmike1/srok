@@ -20,18 +20,17 @@ pub fn GithubIntegrationPage() -> impl IntoView {
     });
 
     Effect::new(move |_| {
-        let current_tool = tool_signal.get();
+        let tool = tool_signal.get();
         let current_page = page.get();
-        if !current_tool.is_empty() {
-            fetch_action.dispatch((current_tool.clone(), current_page));
+        if !tool.is_empty() {
+            fetch_action.dispatch((tool, current_page));
         }
     });
 
-    let on_page_change = Callback::new(move |new_page: usize| {
-        set_page.set(new_page);
-        let current_tool = tool_signal.get();
-        if !current_tool.is_empty() {
-            fetch_action.dispatch((current_tool.clone(), new_page));
+    let on_page_change = Callback::new({
+        let set_page = set_page.clone();
+        move |new_page: usize| {
+            set_page.set(new_page);
         }
     });
 
@@ -42,64 +41,52 @@ pub fn GithubIntegrationPage() -> impl IntoView {
             </h1>
 
             <Transition fallback=move || view! { <p>"Loading..."</p> }>
-                { move || {
-                    fetch_action.value().with(|maybe_result| {
-                        maybe_result.as_ref().map(|result| {
-                            let (table_data, err_msg, paging) = match result {
-                                Ok(json) => {
-                                    let ro = json.clone();
-                                    let paging = ro.paging.clone().unwrap_or_default();
-                                    let paging_clone = paging.clone();
-                                    match ro.result {
-                                        Some(inner) => serde_json::from_value::<CommitSearchResponse>(inner)
-                                            .map(|pd| (pd, String::new(), paging))
-                                            .unwrap_or_else(|e| (
-                                                CommitSearchResponse {
-                                                    total_count: 0,
-                                                    incomplete_results: false,
-                                                    items: vec![],
-                                                },
-                                                e.to_string(),
-                                                paging_clone,
-                                            )),
-                                        None => (
-                                            CommitSearchResponse {
-                                                total_count: 0,
-                                                incomplete_results: false,
-                                                items: vec![],
-                                            },
-                                            ro.error.unwrap_or("Missing result".to_string()),
-                                            paging,
-                                        )
-                                    }
-                                }
-                                Err(err) => (
-                                    CommitSearchResponse {
-                                        total_count: 0,
-                                        incomplete_results: false,
-                                        items: vec![],
-                                    },
-                                    err.to_string(),
-                                    PagingRO::default(),
-                                ),
-                            };
+                {move || {
+                    fetch_action.value().get().map(|result| {
+                        let (table_data, err_msg, paging) = match result {
+                            Ok(json) => {
+                                let paging = json.paging.clone().unwrap_or_default();
+                                let paging_clone = paging.clone();
 
-                            let hidden = err_msg.is_empty();
-                            view! {
-                                <div>
-                                    <GithubTable
-                                        response={table_data}
-                                        paging={paging}
-                                        page={page}
-                                        set_page={set_page}
-                                        on_page_change={on_page_change}
-                                    />
-                                    <p class="error" hidden=move || hidden>
-                                        {move || err_msg.clone()}
-                                    </p>
-                                </div>
+                                match json.result {
+                                    Some(inner) => serde_json::from_value::<CommitSearchResponse>(inner)
+                                        .map(|pd| (pd, String::new(), paging))
+                                        .unwrap_or_else(|e| (
+                                            CommitSearchResponse::default(),
+                                            e.to_string(),
+                                            paging_clone,
+                                        )),
+                                    None => (
+                                        CommitSearchResponse::default(),
+                                        json.error.unwrap_or("Missing result".to_string()),
+                                        paging,
+                                    )
+                                }
                             }
-                        })
+                            Err(err) => (
+                                CommitSearchResponse::default(),
+                                err.to_string(),
+                                PagingRO::default(),
+                            ),
+                        };
+
+                        let hidden = err_msg.is_empty();
+
+                        view! {
+                            <div>
+                                <GithubTable
+                                    response={table_data}
+                                    paging={paging}
+                                    page={page}
+                                    set_page={set_page}
+                                    on_page_change={on_page_change}
+                                    is_loading={fetch_action.pending()}
+                                />
+                                <p class="error" hidden=move || hidden>
+                                    {move || err_msg.clone()}
+                                </p>
+                            </div>
+                        }
                     })
                 }}
             </Transition>

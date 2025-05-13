@@ -20,18 +20,20 @@ pub fn ShodanIntegrationPage() -> impl IntoView {
     });
 
     Effect::new(move |_| {
-        let current_tool = tool_signal.get();
-        let current_page = page.get();
-        if !current_tool.is_empty() {
-            fetch_action.dispatch((current_tool.clone(), current_page));
+        if !tool_signal.get().is_empty() {
+            fetch_action.dispatch((tool_signal.get(), page.get()));
         }
     });
 
-    let on_page_change = Callback::new(move |new_page: usize| {
-        set_page.set(new_page);
-        let current_tool = tool_signal.get();
-        if !current_tool.is_empty() {
-            fetch_action.dispatch((current_tool.clone(), new_page));
+    let on_page_change = Callback::new({
+        let tool_signal = tool_signal.clone();
+        let set_page = set_page.clone();
+        let fetch_action = fetch_action.clone();
+        move |new_page: usize| {
+            set_page.set(new_page);
+            if !tool_signal.get().is_empty() {
+                fetch_action.dispatch((tool_signal.get(), new_page));
+            }
         }
     });
 

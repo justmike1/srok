@@ -13,6 +13,7 @@ pub fn PagedTable<T, FHeader, FRow, IVH, IVR>(
     set_page: WriteSignal<usize>,
     on_page_change: Callback<usize>,
     #[prop(optional, default = 100)] rows_per_page: usize,
+    #[prop(optional, default = Signal::derive(|| false), into)] is_loading: Signal<bool>,
 ) -> impl IntoView
 where
     T: Clone + Send + Sync + 'static,
@@ -56,7 +57,7 @@ where
                         set_page.set(prev);
                         on_page_change.run(prev);
                     }
-                    disabled=move || page.get() == 0
+                    disabled=move || page.get() == 0 || is_loading.get()
                 >
                     {"<"}
                 </button>
@@ -66,7 +67,7 @@ where
                         set_page.set(next);
                         on_page_change.run(next);
                     }
-                    disabled=move || !has_more
+                    disabled=move || !has_more || is_loading.get()
                 >
                     {">"}
                 </button>
