@@ -6,7 +6,7 @@ use reqwest::Client;
 use serde_json::Value;
 
 #[cfg(feature = "ssr")]
-use crate::services::ros::PagingRO;
+use crate::services::shodan::search_integration;
 #[cfg(feature = "ssr")]
 use crate::utils::to_result_ro;
 
