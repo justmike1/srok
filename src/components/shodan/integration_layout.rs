@@ -20,20 +20,17 @@ pub fn ShodanIntegrationPage() -> impl IntoView {
     });
 
     Effect::new(move |_| {
-        if !tool_signal.get().is_empty() {
-            fetch_action.dispatch((tool_signal.get(), page.get()));
+        let tool = tool_signal.get();
+        let current_page = page.get();
+        if !tool.is_empty() {
+            fetch_action.dispatch((tool, current_page));
         }
     });
 
     let on_page_change = Callback::new({
-        let tool_signal = tool_signal.clone();
         let set_page = set_page.clone();
-        let fetch_action = fetch_action.clone();
         move |new_page: usize| {
             set_page.set(new_page);
-            if !tool_signal.get().is_empty() {
-                fetch_action.dispatch((tool_signal.get(), new_page));
-            }
         }
     });
 
@@ -45,64 +42,50 @@ pub fn ShodanIntegrationPage() -> impl IntoView {
 
             <Transition fallback=move || view! { <p>"Loading..."</p> }>
                 { move || {
-                    fetch_action.value().with(|maybe_result| {
-                        maybe_result.as_ref().map(|result| {
-                            let (table_data, err_msg, paging) = match result {
-                                Ok(json) => {
-                                    let ro = json.clone();
-                                    let paging = ro.paging.clone().unwrap_or_default();
-                                    let paging_clone = paging.clone();
-                                    match ro.result {
-                                        Some(inner) => serde_json::from_value::<ShodanSearchResponse>(inner)
-                                            .map(|pd| (pd, String::new(), paging))
-                                            .unwrap_or_else(|e| (
-                                                ShodanSearchResponse {
-                                                    matches: vec![],
-                                                    total: 0,
-                                                    facets: None,
-                                                },
-                                                e.to_string(),
-                                                paging_clone,
-                                            )),
-                                        None => (
-                                            ShodanSearchResponse {
-                                                matches: vec![],
-                                                total: 0,
-                                                facets: None,
-                                            },
-                                            ro.error.unwrap_or("Missing result".to_string()),
-                                            paging,
-                                        )
-                                    }
+                    fetch_action.value().get().map(|result| {
+                        let (table_data, err_msg, paging) = match result {
+                            Ok(json) => {
+                                let paging = json.paging.clone().unwrap_or_default();
+                                let paging_clone = paging.clone();
+                                match json.result {
+                                    Some(inner) => serde_json::from_value::<ShodanSearchResponse>(inner)
+                                        .map(|pd| (pd, String::new(), paging))
+                                        .unwrap_or_else(|e| (
+                                            ShodanSearchResponse::default(),
+                                            e.to_string(),
+                                            paging_clone,
+                                        )),
+                                    None => (
+                                        ShodanSearchResponse::default(),
+                                        json.error.unwrap_or("Missing result".to_string()),
+                                        paging,
+                                    )
                                 }
-                                Err(err) => (
-                                    ShodanSearchResponse {
-                                        matches: vec![],
-                                        total: 0,
-                                        facets: None,
-                                    },
-                                    err.to_string(),
-                                    PagingRO::default(),
-                                ),
-                            };
-
-                            let hidden = err_msg.is_empty();
-
-                            view! {
-                                <div>
-                                    <ShodanTable
-                                        response={table_data}
-                                        paging={paging}
-                                        page={page}
-                                        set_page={set_page}
-                                        on_page_change={on_page_change}
-                                    />
-                                    <p class="error" hidden=move || hidden>
-                                        {move || err_msg.clone()}
-                                    </p>
-                                </div>
                             }
-                        })
+                            Err(err) => (
+                                ShodanSearchResponse::default(),
+                                err.to_string(),
+                                PagingRO::default(),
+                            ),
+                        };
+
+                        let hidden = err_msg.is_empty();
+
+                        view! {
+                            <div>
+                                <ShodanTable
+                                    response={table_data}
+                                    paging={paging}
+                                    page={page}
+                                    set_page={set_page}
+                                    on_page_change={on_page_change}
+                                    is_loading={fetch_action.pending()}
+                                />
+                                <p class="error" hidden=move || hidden>
+                                    {move || err_msg.clone()}
+                                </p>
+                            </div>
+                        }
                     })
                 }}
             </Transition>

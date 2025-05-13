@@ -37,7 +37,7 @@ impl IntegrationSearchService for ShodanSearch {
     }
 
     #[cfg(not(feature = "ssr"))]
-    async fn search(&self, _client: &Client, page: usize) -> Result<ResultRO<Value>, String> {
+    async fn search(&self, _client: &Client, _page: usize) -> Result<ResultRO<Value>, String> {
         Err("Shodan search not available on client".into())
     }
 }
