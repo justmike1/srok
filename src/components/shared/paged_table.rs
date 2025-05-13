@@ -12,7 +12,7 @@ pub fn PagedTable<T, FHeader, FRow, IVH, IVR>(
     page: ReadSignal<usize>,
     set_page: WriteSignal<usize>,
     on_page_change: Callback<usize>,
-    #[prop(optional, default = 50)] rows_per_page: usize,
+    #[prop(optional, default = 100)] rows_per_page: usize,
 ) -> impl IntoView
 where
     T: Clone + Send + Sync + 'static,
