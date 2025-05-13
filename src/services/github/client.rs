@@ -79,7 +79,7 @@ pub async fn search_integration(
     let query = integration.to_github_query();
     debug!("Searching GitHub with query: {}", query);
 
-    let query_key = query.to_string();
+    let query_key = format!("{}::page-{}", query, page);
 
     if let Some(cached) = get_cache().get(&query_key) {
         debug!("Found cached GitHub response");

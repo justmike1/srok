@@ -71,16 +71,16 @@ pub async fn search_integration(
     integration: Integration,
 ) -> Result<ShodanSearchResponse, ShodanError> {
     let query = integration.to_shodan_query();
-    let query_key = query.to_string();
+    debug!("Searching Shodan with query: {}", query);
 
-    debug!("Searching Shodan with query: {}", query_key);
+    let query_key = format!("{}::page-{}", query, page);
 
     if let Some(cached) = get_cache().get(&query_key) {
         debug!("Cache hit for query: {}", query_key);
         return Ok(serde_json::from_value(cached.clone()).unwrap());
     }
 
-    match search_hosts(&query_key, page).await {
+    match search_hosts(&query, page).await {
         Ok(response) => {
             let json = serde_json::to_value(&response).map_err(|e| ShodanError {
                 message: e.to_string(),
