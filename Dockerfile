@@ -1,6 +1,6 @@
 FROM gcr.io/distroless/static:nonroot
 
-COPY target/x86_64-unknown-linux-gnu/release/srok /srok
+COPY target/aarch64-unknown-linux-gnu/release/srok /srok
 
 ENV RUST_LOG=debug \
     LEPTOS_OUTPUT_NAME=srok \
