@@ -1,4 +1,4 @@
-FROM gcr.io/distroless/static:nonroot
+FROM gcr.io/distroless/cc-debian12
 
 ARG TARGETPLATFORM
 
