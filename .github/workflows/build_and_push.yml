@@ -52,3 +52,5 @@ jobs:
           DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
           BRANCH: ${GITHUB_REF##*/}
           PROJECT_VERSION: "1.0.0" # TODO: npx release
+          BUILD_ARGS: |
+            TARGETPLATFORM=aarch64-unknown-linux-gnu

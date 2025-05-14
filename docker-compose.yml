@@ -1,6 +1,10 @@
 services:
   srok:
-    image: "docker.io/mikeengineering/srok:main-latest"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - TARGETPLATFORM=${TARGET}
     container_name: srok
     restart: unless-stopped
     ports:
