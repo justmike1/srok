@@ -1,0 +1,85 @@
+replicaCount: 1
+
+image:
+  repository: mikeengineering/srok
+  pullPolicy: Always
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podLabels: {}
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+env:
+  - name: SHODAN_API_KEY
+    valueFrom:
+      secretKeyRef:
+        name: srok-secret
+        key: shodan-api-key
+  - name: GITHUB_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: srok-secret
+        key: github-token
+
+ingress:
+  enabled: true
+  className: "nginx"
+  hosts:
+    - host: srok.mikejoseph.org
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+   - secretName: cloudflare-origin-cert
+     hosts:
+       - srok.mikejoseph.org
+
+resources:
+  limits:
+    cpu: 2
+    memory: 4Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+volumes: []
+
+volumeMounts: []
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.azure.com/scalesetpriority
+          operator: In
+          values:
+          - spot
