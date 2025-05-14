@@ -34,16 +34,7 @@ pub fn GithubTable(
 
             let sha = item.sha;
             let html_url = item.html_url;
-            let message = item.commit.message;
-
-            let api_key_hint = message
-                .lines()
-                .find(|line| {
-                    let lower = line.to_lowercase();
-                    lower.contains("key") || lower.contains("secret")
-                })
-                .unwrap_or("no api key reference")
-                .to_string();
+            let api_key_hint = item.commit.message;
 
             GithubEntry {
                 author,

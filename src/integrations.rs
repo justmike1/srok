@@ -10,6 +10,7 @@ pub enum Integration {
     SonarQube,
     OpenSearch,
     Shodan,
+    Github,
     GoogleCloud,
     AWS,
     Wifi, // Placeholder
@@ -29,6 +30,7 @@ impl fmt::Display for Integration {
                 Integration::SonarQube => "SonarQube",
                 Integration::OpenSearch => "OpenSearch",
                 Integration::Shodan => "Shodan",
+                Integration::Github => "Github",
                 Integration::GoogleCloud => "Google Cloud",
                 Integration::AWS => "AWS",
                 Integration::Wifi => "Wifi", // Placeholder
@@ -41,7 +43,7 @@ impl Integration {
     pub fn is_secret(&self) -> bool {
         matches!(
             self,
-            Integration::Shodan | Integration::GoogleCloud | Integration::AWS
+            Integration::Shodan | Integration::Github | Integration::GoogleCloud | Integration::AWS
         )
     }
 
@@ -63,6 +65,7 @@ impl Integration {
             Integration::SonarQube,
             Integration::OpenSearch,
             Integration::Shodan,
+            Integration::Github,
             Integration::GoogleCloud,
             Integration::AWS,
             Integration::Wifi, // Placeholder
@@ -79,6 +82,7 @@ impl Integration {
             "sonarqube" => Some(Integration::SonarQube),
             "opensearch" => Some(Integration::OpenSearch),
             "shodan" => Some(Integration::Shodan),
+            "github" => Some(Integration::Github),
             "googlecloud" => Some(Integration::GoogleCloud),
             "aws" => Some(Integration::AWS),
             "wifi" => Some(Integration::Wifi), // Placeholder
@@ -89,6 +93,7 @@ impl Integration {
     pub fn to_github_query(&self) -> &'static str {
         match self {
             Integration::Shodan => "shodan_api_key",
+            Integration::Github => "ghp_",
             Integration::GoogleCloud => "google_api_key",
             Integration::AWS => "aws_secret_access_key",
             _ => panic!("GitHub query not implemented for {}", self),
