@@ -15,18 +15,26 @@ ensure-cross = \
 		cargo install cross; \
 	}
 
+ensure-leptos = \
+	command -v cargo-leptos >/dev/null 2>&1 || { \
+		echo "'cargo-leptos' not found. Installing with 'cargo install cargo-leptos'..."; \
+		cargo install cargo-leptos; \
+	}
+
 compile:
 	@echo "Detected arch: $(ARCH), using target: $(COMPILE_TARGET)"
 	$(MAKE) $(COMPILE_TARGET)
 
 compile-amd64:
 	$(ensure-cross)
+	$(ensure-leptos)
 	cross build --release --target x86_64-unknown-linux-gnu --features ssr --bin srok
 	cargo leptos build --release
 	chmod +x target/x86_64-unknown-linux-gnu/release/srok
 
 compile-arm64:
 	$(ensure-cross)
+	$(ensure-leptos)
 	cross build --release --target aarch64-unknown-linux-gnu --features ssr --bin srok
 	cargo leptos build --release
 	chmod +x target/aarch64-unknown-linux-gnu/release/srok
