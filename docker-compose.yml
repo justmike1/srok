@@ -1,6 +1,6 @@
 services:
   srok:
-    image: "docker.io/mikeengineering/srok:main-latest"
+    image: "docker.io/mikeengineering/srok:1.0.0"
     container_name: srok
     restart: unless-stopped
     ports:

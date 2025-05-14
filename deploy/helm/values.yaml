@@ -12,12 +12,12 @@ fullnameOverride: ""
 podAnnotations: {}
 podLabels: {}
 
-securityContext:
-  capabilities:
-    drop:
-    - ALL
-  readOnlyRootFilesystem: true
-  runAsNonRoot: true
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
 
 service:
   type: ClusterIP
