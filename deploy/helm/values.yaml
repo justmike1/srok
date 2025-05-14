@@ -18,6 +18,7 @@ securityContext:
     - ALL
   readOnlyRootFilesystem: true
   runAsNonRoot: true
+  runAsUser: 1000
 
 service:
   type: ClusterIP
@@ -58,12 +59,23 @@ resources:
 
 livenessProbe:
   httpGet:
-    path: /
+    path: /healthz
     port: http
+  initialDelaySeconds: 3
+  periodSeconds: 10
+  timeoutSeconds: 2
+  failureThreshold: 3
+  successThreshold: 1
+
 readinessProbe:
   httpGet:
-    path: /
+    path: /healthz
     port: http
+  initialDelaySeconds: 3
+  periodSeconds: 5
+  timeoutSeconds: 2
+  failureThreshold: 3
+  successThreshold: 1
 
 volumes: []
 
