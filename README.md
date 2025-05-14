@@ -30,6 +30,7 @@ Total: 0 (UNKNOWN: 0, LOW: 0, MEDIUM: 0, HIGH: 0, CRITICAL: 0)
 ## Quick Start
 
 ```bash
+make compile
 make run
 ```
 
