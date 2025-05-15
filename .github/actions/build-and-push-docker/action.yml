@@ -35,7 +35,7 @@ inputs:
   PROJECT_VERSION:
     description: "The date and branch of the commit | AKA the image tag"
     required: true
-  build-args:
+  BUILD_ARGS:
     description: "docker --build-arg"
     required: false
 
@@ -85,7 +85,7 @@ runs:
         platforms: ${{ inputs.PLATFORM }}
         tags: ${{ steps.prep.outputs.BRANCH_TAG }},${{ steps.prep.outputs.VERSION_TAG }}
         file: ${{ inputs.DOCKERFILE_BASE_PATH }}${{ inputs.DOCKERFILE_FILE_NAME }}
-        build-args: ${{ inputs.build-args }}
+        build-args: ${{ inputs.BUILD_ARGS }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
     # This is a retry workaround for the docker buildx action until https://github.com/docker/build-push-action/issues/719 is resolved
@@ -103,6 +103,6 @@ runs:
         platforms: ${{ inputs.PLATFORM }}
         tags: ${{ steps.prep.outputs.BRANCH_TAG }},${{ steps.prep.outputs.VERSION_TAG }}
         file: ${{ inputs.DOCKERFILE_BASE_PATH }}${{ inputs.DOCKERFILE_FILE_NAME }}
-        build-args: ${{ inputs.build-args }}
+        build-args: ${{ inputs.BUILD_ARGS }}
         cache-from: type=gha
         cache-to: type=gha,mode=max

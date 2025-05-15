@@ -10,6 +10,11 @@
 [![Axum](https://img.shields.io/badge/axum-%23FF4F00.svg?style=for-the-badge&logo=axum&logoColor=white)](https://docs.rs/axum/latest/axum/)
 
 
+**By clicking the link, you acknowledge that you have read and understood the [disclaimer](#disclaimer) and agree to use this tool solely for lawful, ethical, and authorized purposes. You accept full responsibility for your actions, and the author disclaims all liability for misuse.**
+
+You can try it out [here](https://srok.mikeengineering.org)
+
+
 ### Vulnerability Scanning
 
 
@@ -25,6 +30,7 @@ Total: 0 (UNKNOWN: 0, LOW: 0, MEDIUM: 0, HIGH: 0, CRITICAL: 0)
 ## Quick Start
 
 ```bash
+make compile
 make run
 ```
 

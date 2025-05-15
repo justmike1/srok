@@ -394,3 +394,61 @@ footer {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* === Legal Disclaimer Modal === */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(17, 17, 17, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #111;
+  color: #eee;
+  border: 1px solid #444;
+  padding: 2rem;
+  max-width: 520px;
+  border-radius: 12px;
+  box-shadow: 0 0 32px rgba(0, 0, 0, 0.8);
+  font-family: 'Courier New', Courier, monospace;
+  text-align: left;
+  line-height: 1.6;
+}
+
+.modal h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.75rem;
+  color: #fff;
+  text-align: center;
+}
+
+.modal p {
+  font-size: 0.95rem;
+  color: #ccc;
+}
+
+.agree-button {
+  display: block;
+  margin: 2rem auto 0;
+  background: transparent;
+  border: 2px solid #eee;
+  color: #eee;
+  font-size: 1rem;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.agree-button:hover {
+  background: #eee;
+  color: #111;
+}
