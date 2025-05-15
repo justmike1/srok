@@ -28,7 +28,9 @@ async fn main() {
         .route("/healthz", get(healthcheck))
         .route(
             "/api/{*fn_name}",
-            get(move |req| async move { handle_server_fns_with_context(|| (), req).await }),
+            axum::routing::any(
+                |req| async move { handle_server_fns_with_context(|| (), req).await },
+            ),
         )
         .leptos_routes(
             &options_for_leptos_routes,
