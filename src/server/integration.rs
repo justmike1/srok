@@ -14,7 +14,11 @@ use crate::services::ros::ResultErrorDTO;
 #[cfg(feature = "ssr")]
 use crate::services::search::{GithubSearch, IntegrationSearchService, ShodanSearch};
 
-#[server]
+#[server(
+  name = SearchIntegration,
+  prefix = "/api",
+  endpoint = "search_integration"
+)]
 pub async fn search_integration(
     tool: String,
     page: usize,
