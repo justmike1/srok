@@ -27,7 +27,7 @@ async fn main() {
     let app = Router::new()
         .route("/healthz", get(healthcheck))
         .route(
-            "/api/*fn_name",
+            "/api/{*fn_name}",
             get(move |req| async move { handle_server_fns_with_context(|| (), req).await }),
         )
         .leptos_routes(
