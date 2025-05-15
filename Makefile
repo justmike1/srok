@@ -18,7 +18,7 @@ ensure-cross = \
 ensure-leptos = \
 	command -v cargo-leptos >/dev/null 2>&1 || { \
 		echo "'cargo-leptos' not found. Installing with 'cargo install cargo-leptos'..."; \
-		cargo install cargo-leptos; \
+		cargo install cargo-leptos --version 0.2.33 --locked; \
 	}
 
 compile:
