@@ -24,6 +24,8 @@ ensure-leptos = \
 compile:
 	@echo "Detected arch: $(ARCH), using target: $(COMPILE_TARGET)"
 	$(MAKE) $(COMPILE_TARGET)
+	# TODO: Understand why it looks for the wrong file name
+	cp target/site/pkg/srok.wasm target/site/pkg/srok_bg.wasm
 
 compile-amd64:
 	$(ensure-cross)

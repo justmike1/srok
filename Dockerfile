@@ -6,10 +6,11 @@ WORKDIR /app
 
 COPY target/${TARGETPLATFORM}/release/srok /app/srok
 
-COPY target/site /app/site
+COPY target/site /app/
 
 ENV RUST_LOG=debug \
     LEPTOS_OUTPUT_NAME=srok \
+    LEPTOS_SITE_ROOT=. \
     LEPTOS_SITE_ADDR=0.0.0.0:3000
 
 EXPOSE 3000
