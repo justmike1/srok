@@ -35,6 +35,8 @@ env:
       secretKeyRef:
         name: srok-secret
         key: github-token
+  - name: ORIGIN_BASE_URL
+    value: "https://srok.mikejoseph.org"
 
 ingress:
   enabled: true
