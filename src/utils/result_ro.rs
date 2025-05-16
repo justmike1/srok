@@ -1,5 +1,5 @@
 use crate::services::ros::{PagingRO, ResultRO};
-use crate::utils::constants::ROWS_PER_PAGE;
+use crate::utils::config::ROWS_PER_PAGE;
 use serde::Serialize;
 use serde_json::Value;
 

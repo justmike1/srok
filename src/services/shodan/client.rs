@@ -11,14 +11,15 @@ use crate::integrations::Integration;
 use crate::services::shodan::apis::configuration::{ApiKey, Configuration};
 use crate::services::shodan::apis::search_host::{search_host, SearchHostParams};
 use crate::services::shodan::models::{ShodanError, ShodanSearchResponse};
+use crate::utils::cache::{get_or_init_cache, insert_into_cache, try_get_from_cache};
+use crate::utils::config::get_shodan_token;
 
-static CLIENT: OnceLock<Configuration> = OnceLock::new();
+static SHODAN_CLIENT: OnceLock<Configuration> = OnceLock::new();
 static SHODAN_CACHE: OnceLock<Cache<String, Value>> = OnceLock::new();
 
 fn get_client() -> &'static Configuration {
-    CLIENT.get_or_init(|| {
-        let api_key =
-            std::env::var("SHODAN_API_KEY").expect("SHODAN_API_KEY environment variable not set");
+    SHODAN_CLIENT.get_or_init(|| {
+        let api_key = get_shodan_token().to_string();
 
         let mut config = Configuration::default();
         config.api_key = Some(ApiKey {
@@ -30,7 +31,7 @@ fn get_client() -> &'static Configuration {
 }
 
 fn get_cache() -> &'static Cache<String, Value> {
-    SHODAN_CACHE.get_or_init(|| Cache::new(3600))
+    get_or_init_cache(&SHODAN_CACHE)
 }
 
 pub async fn search_hosts(
@@ -74,20 +75,17 @@ pub async fn search_integration(
     debug!("Searching Shodan with query: {}", query);
 
     let query_key = format!("{}::page-{}", query, page);
+    let cache = get_cache();
 
-    if let Some(cached) = get_cache().get(&query_key) {
+    if let Some(cached) = try_get_from_cache::<ShodanSearchResponse>(cache, &query_key) {
         debug!("Cache hit for query: {}", query_key);
-        return Ok(serde_json::from_value(cached.clone()).unwrap());
+        return Ok(cached);
     }
 
     match search_hosts(&query, page).await {
         Ok(response) => {
-            let json = serde_json::to_value(&response).map_err(|e| ShodanError {
-                message: e.to_string(),
-                status: StatusCode::INTERNAL_SERVER_ERROR,
-            })?;
-            get_cache().insert(query_key.clone(), json.clone());
-            Ok(serde_json::from_value(json).unwrap())
+            insert_into_cache(cache, &query_key, &response);
+            Ok(response)
         }
         Err(e) => Err(ShodanError {
             message: e.to_string(),

@@ -1,4 +1,4 @@
-use crate::utils::constants::ROWS_PER_PAGE;
+use crate::utils::config::ROWS_PER_PAGE;
 use leptos::prelude::*;
 use std::sync::Arc;
 
