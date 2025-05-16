@@ -7,12 +7,12 @@ use log::debug;
 use quick_cache::sync::Cache;
 use serde_json::Value;
 
-use crate::constants::get_github_token;
 use crate::integrations::Integration;
 use crate::services::github::apis::configuration::Configuration;
 use crate::services::github::apis::search_commits::{self, SearchCommitsParams};
 use crate::services::github::models::{CommitSearchResponse, GithubError};
 use crate::utils::cache::{get_or_init_cache, insert_into_cache, try_get_from_cache};
+use crate::utils::config::get_github_token;
 
 static GITHUB_CLIENT: OnceLock<Configuration> = OnceLock::new();
 static GITHUB_CACHE: OnceLock<Cache<String, Value>> = OnceLock::new();

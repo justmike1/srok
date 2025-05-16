@@ -1,3 +1,4 @@
+use axum::http::HeaderValue;
 use axum::{routing::get, Router};
 use dotenv::dotenv;
 use leptos::config::get_configuration;
@@ -5,7 +6,6 @@ use leptos_axum::{generate_route_list, handle_server_fns_with_context, LeptosRou
 use log::info;
 use srok::app::{shell, App};
 use srok::utils::config::get_origin_base_url;
-use std::net::SocketAddr;
 use tower_http::cors::{Any, CorsLayer};
 
 async fn healthcheck() -> &'static str {
@@ -28,7 +28,9 @@ async fn main() {
     let options_for_shell = options_for_leptos_routes.clone();
 
     let cors = CorsLayer::new()
-        .allow_origin(get_origin_base_url().parse().unwrap())
+        .allow_origin(
+            HeaderValue::from_str(get_origin_base_url()).expect("Invalid ORIGIN_BASE_URL"),
+        )
         .allow_methods(Any)
         .allow_headers(Any);
 

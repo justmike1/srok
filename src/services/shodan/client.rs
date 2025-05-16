@@ -7,12 +7,12 @@ use log::debug;
 use quick_cache::sync::Cache;
 use serde_json::Value;
 
-use crate::constants::get_shodan_token;
 use crate::integrations::Integration;
 use crate::services::shodan::apis::configuration::{ApiKey, Configuration};
 use crate::services::shodan::apis::search_host::{search_host, SearchHostParams};
 use crate::services::shodan::models::{ShodanError, ShodanSearchResponse};
 use crate::utils::cache::{get_or_init_cache, insert_into_cache, try_get_from_cache};
+use crate::utils::config::get_shodan_token;
 
 static SHODAN_CLIENT: OnceLock<Configuration> = OnceLock::new();
 static SHODAN_CACHE: OnceLock<Cache<String, Value>> = OnceLock::new();
