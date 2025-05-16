@@ -1,12 +1,10 @@
-use axum::http::HeaderValue;
-use axum::{routing::get, Router};
+use axum::{middleware, routing::get, Router};
 use dotenv::dotenv;
 use leptos::config::get_configuration;
 use leptos_axum::{generate_route_list, handle_server_fns_with_context, LeptosRoutes};
 use log::info;
 use srok::app::{shell, App};
-use srok::utils::config::get_origin_base_url;
-use tower_http::cors::{Any, CorsLayer};
+use srok::utils::guard::{cors_layer, enforce_web_guard};
 
 async fn healthcheck() -> &'static str {
     "ok"
@@ -27,13 +25,6 @@ async fn main() {
     let options_for_state = leptos_options.clone();
     let options_for_shell = options_for_leptos_routes.clone();
 
-    let cors = CorsLayer::new()
-        .allow_origin(
-            HeaderValue::from_str(get_origin_base_url()).expect("Invalid ORIGIN_BASE_URL"),
-        )
-        .allow_methods(Any)
-        .allow_headers(Any);
-
     let api_routes = Router::new()
         .route(
             "/api/{*fn_name}",
@@ -41,7 +32,8 @@ async fn main() {
                 |req| async move { handle_server_fns_with_context(|| (), req).await },
             ),
         )
-        .layer(cors);
+        .layer(middleware::from_fn(enforce_web_guard))
+        .layer(cors_layer());
 
     let app = Router::new()
         .route("/healthz", get(healthcheck))
