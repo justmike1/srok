@@ -1,4 +1,4 @@
-use crate::components::{IntegrationButton, IntegrationPage};
+use crate::components::{IntegrationButton, IntegrationPage, SiteFooter};
 use crate::integrations::Integration;
 use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title};
@@ -68,7 +68,7 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
 }
 
 #[component]
-pub fn app() -> impl IntoView {
+pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
@@ -84,7 +84,7 @@ pub fn app() -> impl IntoView {
 }
 
 #[component]
-fn home_page() -> impl IntoView {
+fn HomePage() -> impl IntoView {
     let (toggle_state, set_toggle_state) = signal(HomeView::default());
     let (show_modal, set_show_modal) = signal(true);
 
@@ -92,15 +92,12 @@ fn home_page() -> impl IntoView {
         let set_show_modal = set_show_modal.clone();
         move |_| {
             if let Some(win) = web_sys::window() {
-                match win.local_storage() {
-                    Ok(Some(storage)) => {
-                        if let Ok(Some(agreed)) = storage.get_item("srok_disclaimer_agreed") {
-                            if agreed == "true" {
-                                set_show_modal.set(false);
-                            }
+                if let Ok(Some(storage)) = win.local_storage() {
+                    if let Ok(Some(agreed)) = storage.get_item("srok_disclaimer_agreed") {
+                        if agreed == "true" {
+                            set_show_modal.set(false);
                         }
                     }
-                    _ => {}
                 }
             }
         }
@@ -197,14 +194,8 @@ fn home_page() -> impl IntoView {
                         }
                     }).collect_view()}
                 </div>
-
-                <footer class="disclaimer">
-                    <p>
-                        <strong>Disclaimer:</strong> This tool is intended for authorized testing and educational use only. Unauthorized use is strictly prohibited.
-                        The author assumes no liability for misuse or damage caused by this software. Use responsibly and comply with all applicable laws.
-                    </p>
-                </footer>
             </section>
+            <SiteFooter />
         </>
     }
 }
