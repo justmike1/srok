@@ -1,10 +1,10 @@
-use axum::{middleware, routing::get, Router};
+use axum::{routing::get, Router};
 use dotenv::dotenv;
 use leptos::config::get_configuration;
 use leptos_axum::{generate_route_list, handle_server_fns_with_context, LeptosRoutes};
 use log::info;
 use srok::app::{shell, App};
-use srok::utils::guard::{cors_layer, enforce_web_guard};
+use srok::utils::guard::cors_layer;
 
 async fn healthcheck() -> &'static str {
     "ok"
@@ -32,7 +32,6 @@ async fn main() {
                 |req| async move { handle_server_fns_with_context(|| (), req).await },
             ),
         )
-        .layer(middleware::from_fn(enforce_web_guard))
         .layer(cors_layer());
 
     let app = Router::new()

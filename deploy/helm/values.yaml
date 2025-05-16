@@ -35,11 +35,6 @@ env:
       secretKeyRef:
         name: srok-secret
         key: github-token
-  - name: FRONTEND_SECRET
-    valueFrom:
-      secretKeyRef:
-        name: srok-secret
-        key: frontend-secret
   - name: ORIGIN_BASE_URL
     value: "https://srok.mikejoseph.org"
 
