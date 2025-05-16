@@ -7,29 +7,30 @@ use log::debug;
 use quick_cache::sync::Cache;
 use serde_json::Value;
 
+use crate::constants::get_github_token;
 use crate::integrations::Integration;
 use crate::services::github::apis::configuration::Configuration;
 use crate::services::github::apis::search_commits::{self, SearchCommitsParams};
 use crate::services::github::models::{CommitSearchResponse, GithubError};
+use crate::utils::cache::{get_or_init_cache, insert_into_cache, try_get_from_cache};
 
-static CLIENT: OnceLock<Configuration> = OnceLock::new();
+static GITHUB_CLIENT: OnceLock<Configuration> = OnceLock::new();
 static GITHUB_CACHE: OnceLock<Cache<String, Value>> = OnceLock::new();
 
 fn get_client() -> &'static Configuration {
-    CLIENT.get_or_init(|| {
-        let token =
-            std::env::var("GITHUB_TOKEN").expect("GITHUB_TOKEN environment variable not set");
+    GITHUB_CLIENT.get_or_init(|| {
+        let token = get_github_token().to_string();
 
         let mut config = Configuration::default();
         config.bearer_access_token = Some(token);
-        config.user_agent = Some("velotix-github-client".to_string());
+        config.user_agent = Some("github-client".to_string());
 
         config
     })
 }
 
 fn get_cache() -> &'static Cache<String, Value> {
-    GITHUB_CACHE.get_or_init(|| Cache::new(3600))
+    get_or_init_cache(&GITHUB_CACHE)
 }
 
 pub async fn search_commits_internal(
@@ -80,20 +81,17 @@ pub async fn search_integration(
     debug!("Searching GitHub with query: {}", query);
 
     let query_key = format!("{}::page-{}", query, page);
+    let cache = get_cache();
 
-    if let Some(cached) = get_cache().get(&query_key) {
+    if let Some(cached) = try_get_from_cache::<CommitSearchResponse>(cache, &query_key) {
         debug!("Found cached GitHub response");
-        return Ok(serde_json::from_value(cached.clone()).unwrap());
+        return Ok(cached);
     }
 
     match search_commits_internal(&query, page).await {
         Ok(response) => {
-            let json = serde_json::to_value(&response).map_err(|e| GithubError {
-                message: e.to_string(),
-                status: StatusCode::INTERNAL_SERVER_ERROR,
-            })?;
-            get_cache().insert(query_key, json.clone());
-            Ok(serde_json::from_value(json).unwrap())
+            insert_into_cache(cache, &query_key, &response);
+            Ok(response)
         }
         Err(e) => Err(GithubError {
             message: e.to_string(),
