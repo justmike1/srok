@@ -8,17 +8,13 @@ pub static GITHUB_TOKEN: OnceLock<String> = OnceLock::new();
 
 pub static SHODAN_TOKEN: OnceLock<String> = OnceLock::new();
 
-pub static FRONTEND_SECRET: OnceLock<String> = OnceLock::new();
-
-pub fn get_frontend_secret() -> &'static str {
-    FRONTEND_SECRET.get_or_init(|| {
-        std::env::var("FRONTEND_SECRET").expect("FRONTEND_SECRET environment variable not set")
-    })
-}
-
 pub fn get_origin_base_url() -> &'static str {
     ORIGIN_BASE_URL.get_or_init(|| {
-        std::env::var("ORIGIN_BASE_URL").expect("ORIGIN_BASE_URL environment variable not set")
+        std::env::var("ORIGIN_BASE_URL")
+            .or_else(|_| std::env::var("LEPTOS_SITE_ADDR"))
+            .unwrap_or_else(|_| {
+                panic!("Neither ORIGIN_BASE_URL nor LEPTOS_SITE_ADDR environment variables are set")
+            })
     })
 }
 

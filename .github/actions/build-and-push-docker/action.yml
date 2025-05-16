@@ -104,5 +104,4 @@ runs:
         tags: ${{ steps.prep.outputs.BRANCH_TAG }},${{ steps.prep.outputs.VERSION_TAG }}
         file: ${{ inputs.DOCKERFILE_BASE_PATH }}${{ inputs.DOCKERFILE_FILE_NAME }}
         build-args: ${{ inputs.BUILD_ARGS }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+        no-cache: true
