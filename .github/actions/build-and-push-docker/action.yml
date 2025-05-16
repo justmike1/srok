@@ -105,5 +105,3 @@ runs:
         file: ${{ inputs.DOCKERFILE_BASE_PATH }}${{ inputs.DOCKERFILE_FILE_NAME }}
         build-args: ${{ inputs.BUILD_ARGS }}
         no-cache: true
-        # cache-from: type=gha
-        # cache-to: type=gha,mode=max
