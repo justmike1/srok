@@ -23,7 +23,6 @@ fn get_client() -> &'static Configuration {
 
         let mut config = Configuration::default();
         config.bearer_access_token = Some(token);
-        config.user_agent = Some("github-client".to_string());
 
         config
     })
