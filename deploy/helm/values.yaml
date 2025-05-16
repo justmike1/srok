@@ -46,6 +46,12 @@ env:
 ingress:
   enabled: true
   className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/limit-rps: "100"
+    nginx.ingress.kubernetes.io/limit-burst-multiplier: "3"
+    nginx.ingress.kubernetes.io/limit-connections: "20"
+    nginx.ingress.kubernetes.io/limit-by: "$binary_remote_addr"
+    nginx.ingress.kubernetes.io/limit-rate-after: "0"
   hosts:
     - host: srok.mikejoseph.org
       paths:
