@@ -195,6 +195,7 @@ fn HomePage() -> impl IntoView {
                     }).collect_view()}
                 </div>
             </section>
+
             <SiteFooter />
         </>
     }
