@@ -11,8 +11,7 @@ use tower_http::cors::{Any, CorsLayer};
 
 use crate::utils::config::{get_frontend_secret, get_origin_base_url};
 
-/// Middleware to enforce CORS Origin and `X-Frontend-Secret` for API routes
-pub async fn enforce_web_guard<B>(req: Request<B>, next: Next<B>) -> Result<Response, StatusCode> {
+pub async fn enforce_web_guard(req: Request<Body>, next: Next) -> Result<Response, StatusCode> {
     let origin_ok = req
         .headers()
         .get("origin")
@@ -38,7 +37,6 @@ pub async fn enforce_web_guard<B>(req: Request<B>, next: Next<B>) -> Result<Resp
     }
 }
 
-/// Reusable CORS layer restricted to configured frontend origin
 pub fn cors_layer() -> CorsLayer {
     CorsLayer::new()
         .allow_origin(
