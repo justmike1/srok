@@ -6,6 +6,8 @@ services:
       args:
         - TARGETPLATFORM=${TARGET}
     container_name: srok
+    env_file:
+      - .env
     restart: unless-stopped
     ports:
       - 3000:3000
