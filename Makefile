@@ -31,8 +31,6 @@ compile-amd64:
 	cross build --release --target x86_64-unknown-linux-gnu --features ssr --bin srok
 	cargo leptos build --release
 	chmod +x target/x86_64-unknown-linux-gnu/release/srok
-	# TEMP/TODO: Understand why it looks for the wrong file name
-	cp target/site/pkg/srok.wasm target/site/pkg/srok_bg.wasm
 
 compile-arm64:
 	$(ensure-cross)
@@ -40,8 +38,6 @@ compile-arm64:
 	cross build --release --target aarch64-unknown-linux-gnu --features ssr --bin srok
 	cargo leptos build --release
 	chmod +x target/aarch64-unknown-linux-gnu/release/srok
-	# TEMP/TODO: Understand why it looks for the wrong file name
-	cp target/site/pkg/srok.wasm target/site/pkg/srok_bg.wasm
 
 run:
 	@echo "Running for target: $(TARGET)"
