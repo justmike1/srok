@@ -7,11 +7,11 @@ use quick_cache::sync::Cache;
 use serde::{de::DeserializeOwned, Serialize};
 use serde_json::Value;
 
-/// Lazy-initialized JSON cache with a 1-hour TTL
+/// Lazy-initialized JSON cache with a 12-hour TTL
 pub fn get_or_init_cache(
     tag: &'static OnceLock<Cache<String, Value>>,
 ) -> &'static Cache<String, Value> {
-    tag.get_or_init(|| Cache::new(3600))
+    tag.get_or_init(|| Cache::new(3600 * 12))
 }
 
 pub fn try_get_from_cache<T: DeserializeOwned>(
