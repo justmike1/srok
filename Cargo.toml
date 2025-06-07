@@ -29,7 +29,7 @@ openapi = { version = "0.1.5", optional = true }
 # Hydration/WebAssembly-specific
 console_error_panic_hook = { version = "0.1", optional = true }
 wasm-bindgen = { version = "=0.2.100", optional = true }
-reqwest = { version = "0.12.15", default-features = false, features = ["json", "rustls-tls"] }
+reqwest = { version = "0.12.19", default-features = false, features = ["json", "rustls-tls"] }
 web-sys = { version = "0.3.77", features = ["Window","Storage"] }
 tower-http = { version = "0.5", features = ["cors"] }
 serde_json = "1.0.140"
@@ -82,4 +82,7 @@ bin-default-features = false
 lib-features = ["hydrate"]
 lib-default-features = false
 lib-profile-release = "wasm-release"
+hash-files = false
+
+[package.metadata.leptos.envs.PROD]
 hash-files = true

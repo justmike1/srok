@@ -45,8 +45,8 @@ pub async fn search_commits_internal(
     let params = SearchCommitsParams {
         q: trimmed.to_string(),
         accept: "application/vnd.github.cloak-preview+json".to_string(),
-        sort: None,
-        order: None,
+        sort: Some("committer-date".to_string()),
+        order: Some("desc".to_string()),
         per_page: Some(100),
         page: page.try_into().ok(),
     };
