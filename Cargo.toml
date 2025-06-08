@@ -82,7 +82,4 @@ bin-default-features = false
 lib-features = ["hydrate"]
 lib-default-features = false
 lib-profile-release = "wasm-release"
-hash-files = false
-
-[package.metadata.leptos.envs.PROD]
 hash-files = true

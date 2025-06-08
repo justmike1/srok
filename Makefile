@@ -29,7 +29,7 @@ compile-amd64:
 	$(ensure-cross)
 	$(ensure-leptos)
 	cross build --release --target x86_64-unknown-linux-gnu --features ssr --bin srok
-	cargo leptos build --release --env PROD
+	cargo leptos build --release
 	chmod +x target/x86_64-unknown-linux-gnu/release/srok
 
 compile-arm64:
