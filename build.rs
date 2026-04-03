@@ -41,7 +41,7 @@ fn generate_client(openapi_spec: &Path, output_dir: &str, package_name: &str, fo
     );
 
     let status = Command::new("openapi-generator")
-        .args(&[
+        .args([
             "generate",
             "-i",
             openapi_spec.to_str().unwrap(),

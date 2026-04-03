@@ -12,13 +12,19 @@ TARGET ?= $(TARGET_ARCH)
 ensure-cross = \
 	command -v cross >/dev/null 2>&1 || { \
 		echo "'cross' not found. Installing with 'cargo install cross'..."; \
-		cargo install cross; \
+		cargo install cross --git https://github.com/cross-rs/cross --locked; \
 	}
 
 ensure-leptos = \
 	command -v cargo-leptos >/dev/null 2>&1 || { \
 		echo "'cargo-leptos' not found. Installing with 'cargo install cargo-leptos'..."; \
-		cargo install cargo-leptos --version 0.2.33 --locked; \
+		cargo install cargo-leptos --version 0.3.5 --locked; \
+	}
+
+ensure-precommit = \
+	command -v pre-commit >/dev/null 2>&1 || { \
+		echo "'pre-commit' not found. Install it from https://pre-commit.com"; \
+		exit 1; \
 	}
 
 compile:
@@ -45,3 +51,7 @@ run:
 
 clean:
 	docker compose -f docker-compose.yml down --remove-orphans
+
+precommit-install:
+	$(ensure-precommit)
+	pre-commit install
